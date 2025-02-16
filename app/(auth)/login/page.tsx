@@ -13,7 +13,7 @@ export default function Page() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-white">
+    <div className="min-h-screen flex items-center justify-center bg-[#f3f4f6]">
       <section className="bg-white shadow-lg rounded-lg p-8 max-w-md w-full">
         <div className="text-center mb-8">
           <h2 className="font-bold text-2xl text-gray-800">
@@ -53,22 +53,32 @@ export default function Page() {
 
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-200"
+            className="w-full bg-textdark4 text-[#fff] py-3 rounded-lg hover:bg-blue-700 transition duration-200"
           >
             Sign In
           </button>
         </form>
 
         <div className="text-center mt-4">
-          <a href="#" className="text-blue-600 hover:underline">
+          <a href="#" className="text-textdark3 text-base hover:text-blue-600">
             Forgot your password?
           </a>
         </div>
 
         <div className="text-center mt-4">
-          <button className="w-full bg-red-600 text-white py-3 rounded-lg hover:bg-red-700 transition duration-200">
+          <button className="w-full bg-[#F9FAFB] text-[#606882] py-4 border border-gray-300 rounded-lg hover:text-dark hover:bg-gray-200 flex items-center justify-center transition duration-200">
+            <img src="google.svg" className="w-5 h-5 mr-2" alt="Google logo" />
             Sign In with Google
           </button>
+        </div>
+
+        <div className="text-center mt-4">
+          <p className="text-[#606882]">
+            Don't have an account?{" "}
+            <a href="#" className="text-textdark4 hover:text-blue-600">
+              Sign Up Now!
+            </a>
+          </p>
         </div>
       </section>
     </div>
