@@ -1,9 +1,10 @@
+import RegisterPage from '@/components/ui/register/RegisterPage'
 import React from 'react'
 
 export default function page() {
   return (
     <div>
-      <p>Register</p>
+      <RegisterPage />
     </div>
   )
 }
