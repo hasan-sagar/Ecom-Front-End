@@ -25,7 +25,7 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="relative w-full max-w-[30rem]">
+    <div className="relative w-full max-w-[30rem] hidden lg:block">
       <form
         onSubmit={handleSubmit}
         className="flex items-center border border-gray-300 rounded-md shadow-sm bg-white overflow-hidden"
@@ -39,7 +39,7 @@ export default function SearchBar() {
           onBlur={() => setTimeout(() => setIsFocused(false), 200)}
           className="flex-1 px-4 py-2 focus:outline-none"
         />
-        <button type="submit" className="px-4 text-gray-600">
+        <button type="submit" className="px-4 text-gray-600 sm:px-2 sm:text-sm">
           <IoSearch className="text-zinc-400" size={20} />
         </button>
       </form>
