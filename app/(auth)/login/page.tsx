@@ -1,5 +1,6 @@
 "use client";
 import React, { useState } from "react";
+import Image from "next/image";
 
 export default function Page() {
   const [email, setEmail] = useState("");
@@ -67,14 +68,20 @@ export default function Page() {
 
         <div className="text-center mt-4">
           <button className="w-full bg-[#F9FAFB] text-[#606882] py-4 border border-gray-300 rounded-lg hover:text-dark hover:bg-gray-200 flex items-center justify-center transition duration-200">
-            <img src="google.svg" className="w-5 h-5 mr-2" alt="Google logo" />
+            <Image
+              src="/google.svg"
+              width={20}
+              height={20}
+              alt="Google logo"
+              className="mr-2"
+            />
             Sign In with Google
           </button>
         </div>
 
         <div className="text-center mt-4">
           <p className="text-[#606882]">
-            Don't have an account?{" "}
+            Don&apos;t have an account?{" "}
             <a href="#" className="text-textdark4 hover:text-blue-600">
               Sign Up Now!
             </a>
