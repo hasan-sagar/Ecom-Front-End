@@ -4,7 +4,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/navigation";
-import { Autoplay, Pagination, Navigation } from "swiper/modules";
+import { Autoplay, Pagination } from "swiper/modules";
 import Image from "next/image";
 
 const slides = [
@@ -42,6 +42,7 @@ export default function LandingPage() {
           <Swiper
             spaceBetween={30}
             centeredSlides={true}
+            autoplay={{ delay: 3000, disableOnInteraction: false }}
             pagination={{ clickable: true }}
             modules={[Autoplay, Pagination]}
             className="mySwiper"
