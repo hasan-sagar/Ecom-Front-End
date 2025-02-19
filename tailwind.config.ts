@@ -10,13 +10,16 @@ export default {
     extend: {
       colors: {
         primary: "#3C50E0",
-        secondary: "#f23030",
+        secondary: "#02AAA4",
+        accent: "#F27430",
         textdark: "rgb(141 147 165)",
         textdark2: "rgb(28 39 76)",
         backdrop: "#F3F4F6",
         textdark3: "#606882",
         textdark4: "#1c274c",
         backgroundColor: "#E5EAF4",
+        backgroundColor2: "#E5EAF4",
+        backgroundColor3: "#FFECE1",
       },
     },
   },
