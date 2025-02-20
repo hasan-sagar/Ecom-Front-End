@@ -37,6 +37,9 @@ import NewArrivalProduct from "./newArrivalProduct/NewArrivalProduct";
 import MostSellingProduct from "./sellingProduct/MostSellingProduct";
 import ShippingBenefitsBanner from "./shippingBenefitsBanner/ShippingBenefitsBanner";
 import NewsletterSubscription from "./newsletterSubscription/NewsletterSubscription ";
+import Footer from "./footer/Footer";
+
+
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -59,6 +62,7 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
         children
       )}
       <NewsletterSubscription />
+      <Footer />
     </>
   );
 }
