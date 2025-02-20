@@ -93,7 +93,7 @@ export default function NewArrivalProduct() {
         {demoProductData.map((product) => (
           <div
             key={product.id}
-            className="rounded overflow-hidden shadow-sm flex flex-col justify-between"
+            className="rounded overflow-hidden flex flex-col justify-between"
           >
             <div className="relative group bg-backgroundColor5">
               <a href="#">
