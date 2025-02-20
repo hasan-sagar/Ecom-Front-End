@@ -4,6 +4,7 @@ import AppMenu from "./appMenu/AppMenu";
 import LandingPage from "./landingPage/LandingPage";
 import PromotionProduct from "./promotionProduct/PromotionProduct";
 import FlashSaleProduct from "./flashSaleCountdown/FlashSaleProduct";
+import NewArrivalProduct from "./newArrivalProduct/NewArrivalProduct";
 
 export default function AppLayout() {
   return (
@@ -11,6 +12,7 @@ export default function AppLayout() {
       <AppNavbar />
       <AppMenu />
       <LandingPage />
+      <NewArrivalProduct />
       <PromotionProduct />
       <FlashSaleProduct />
     </>
