@@ -8,6 +8,9 @@ import NewArrivalProduct from "./newArrivalProduct/NewArrivalProduct";
 import MostSellingProduct from "./sellingProduct/MostSellingProduct";
 import ShippingBenefitsBanner from "./shippingBenefitsBanner/ShippingBenefitsBanner";
 import NewsletterSubscription from "./newsletterSubscription/NewsletterSubscription ";
+import Footer from "./footer/Footer";
+
+
 
 export default function AppLayout() {
   return (
@@ -21,6 +24,7 @@ export default function AppLayout() {
       <MostSellingProduct />
       <ShippingBenefitsBanner />
       <NewsletterSubscription />
+      <Footer />
     </>
   );
 }
