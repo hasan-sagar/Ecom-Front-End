@@ -65,7 +65,7 @@ export default function Footer() {
                 <a href="#" className="text-textdark4 hover:text-black">Terms of Use</a>
               </li>
               <li className="mb-2">
-                <a href="#" className="text-textdark4 hover:text-black">FAQ's</a>
+                <a href="#" className="text-textdark4 hover:text-black">FAQs</a>
               </li>
               <li className="mb-2">
                 <a href="#" className="text-textdark4 hover:text-black">Contact</a>
