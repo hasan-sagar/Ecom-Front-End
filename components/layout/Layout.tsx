@@ -5,6 +5,7 @@ import LandingPage from "./landingPage/LandingPage";
 import PromotionProduct from "./promotionProduct/PromotionProduct";
 import FlashSaleProduct from "./flashSaleCountdown/FlashSaleProduct";
 import NewArrivalProduct from "./newArrivalProduct/NewArrivalProduct";
+import MostSellingProduct from "./sellingProduct/MostSellingProduct";
 
 export default function AppLayout() {
   return (
@@ -15,6 +16,7 @@ export default function AppLayout() {
       <NewArrivalProduct />
       <PromotionProduct />
       <FlashSaleProduct />
+      <MostSellingProduct />
     </>
   );
 }

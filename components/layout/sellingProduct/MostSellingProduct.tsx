@@ -77,13 +77,13 @@ const StarRating = ({ rating }: { rating: number }) => {
   );
 };
 
-export default function NewArrivalProduct() {
+export default function MostSellingProduct() {
   return (
     <div className="max-w-screen-xl mx-auto p-5 sm:p-10 md:p-16">
       <div className="flex justify-between items-center mb-8">
         <h1 className="text-2xl font-semibold flex items-center gap-2">
           <FiShoppingBag size={20} className="text-primary" />
-          New Arrivals
+          Most Selling Products
         </h1>
         <button className="bg-[#1c274c] hover:bg-blue-700 text-white font-medium py-2 px-8 rounded-md transition-colors">
           View All
