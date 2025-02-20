@@ -6,6 +6,8 @@ import PromotionProduct from "./promotionProduct/PromotionProduct";
 import FlashSaleProduct from "./flashSaleCountdown/FlashSaleProduct";
 import NewArrivalProduct from "./newArrivalProduct/NewArrivalProduct";
 import MostSellingProduct from "./sellingProduct/MostSellingProduct";
+import ShippingBenefitsBanner from "./shippingBenefitsBanner/ShippingBenefitsBanner";
+import NewsletterSubscription from "./newsletterSubscription/NewsletterSubscription ";
 
 export default function AppLayout() {
   return (
@@ -17,6 +19,8 @@ export default function AppLayout() {
       <PromotionProduct />
       <FlashSaleProduct />
       <MostSellingProduct />
+      <ShippingBenefitsBanner />
+      <NewsletterSubscription />
     </>
   );
 }

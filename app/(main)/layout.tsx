@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import "@/app/globals.css";
-import AppLayout from "@/components/layout/Layout";
 
 export const metadata: Metadata = {
   title: "Ecom Exute Shop",
@@ -15,7 +14,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AppLayout />
+        {/* <AppLayout /> */}
         {children}
       </body>
     </html>
