@@ -3,6 +3,7 @@ import AppNavbar from "./appNavbar/AppNavbar";
 import AppMenu from "./appMenu/AppMenu";
 import LandingPage from "./landingPage/LandingPage";
 import PromotionProduct from "./promotionProduct/PromotionProduct";
+import FlashSaleProduct from "./flashSaleCountdown/FlashSaleProduct";
 import NewArrivalProduct from "./newArrivalProduct/NewArrivalProduct";
 
 export default function AppLayout() {
@@ -13,6 +14,7 @@ export default function AppLayout() {
       <LandingPage />
       <NewArrivalProduct />
       <PromotionProduct />
+      <FlashSaleProduct />
     </>
   );
 }

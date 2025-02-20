@@ -20,6 +20,7 @@ export default {
         backgroundColor: "#E5EAF4",
         backgroundColor2: "#E5EAF4",
         backgroundColor3: "#FFECE1",
+        backgroundColor4: "#d0e9f3",
       },
     },
   },
