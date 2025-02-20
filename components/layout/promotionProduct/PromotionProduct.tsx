@@ -38,7 +38,7 @@ const productData: Product[] = [
 ];
 
 export default function PromotionProduct() {
-  const [isHovered, setIsHovered] = useState(false);
+  const [isHovered, setIsHovered] = useState({ banner: false, samsung: false, google: false });
   const [activeFeature, setActiveFeature] = useState(0);
 
   // Split features into an array
@@ -58,10 +58,10 @@ export default function PromotionProduct() {
         {/* Enhanced iPhone Banner Section */}
         <div
           className={`bg-gradient-to-r from-gray-100 to-blue-50 rounded-lg p-8 md:p-14 mb-6 flex flex-col md:flex-row items-center justify-between transition-all duration-500 ${
-            isHovered ? "shadow-md scale-[1.01]" : "shadow-sm"
+            isHovered.banner ? "shadow-md scale-[1.01]" : "shadow-sm"
           }`}
-          onMouseEnter={() => setIsHovered(true)}
-          onMouseLeave={() => setIsHovered(false)}
+          onMouseEnter={() => setIsHovered({ ...isHovered, banner: true })}
+          onMouseLeave={() => setIsHovered({ ...isHovered, banner: false })}
         >
           <div className="md:w-1/2 mb-6 md:mb-0">
             <div className="flex items-center mb-2">
@@ -75,7 +75,7 @@ export default function PromotionProduct() {
             </h3>
             <h2
               className={`text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 mt-2 mb-4 transition-all duration-500 ${
-                isHovered ? "scale-105" : ""
+                isHovered.banner ? "scale-105" : ""
               }`}
             >
               {productData[0].offer}
@@ -111,7 +111,7 @@ export default function PromotionProduct() {
 
             <button
               className={`group relative overflow-hidden bg-blue-600 text-white font-medium py-3 px-8 rounded-md transition-all duration-300 ${
-                isHovered ? "bg-blue-700" : ""
+                isHovered.banner ? "bg-blue-700" : ""
               }`}
             >
               <span className="relative z-10">Buy Now</span>
@@ -121,13 +121,11 @@ export default function PromotionProduct() {
           <div className="md:w-1/2 flex justify-center relative">
             <div
               className={`absolute -inset-4  rounded-full opacity-20 blur-2xl transition-all duration-500 ${
-                isHovered ? "scale-110" : "scale-90"
+                isHovered.banner ? "scale-110" : "scale-90"
               }`}
             ></div>
             <div
-              className={`relative transition-all duration-500 transform ${
-                isHovered ? "scale-110 -rotate-6" : ""
-              }`}
+              className="relative transition-all duration-500 transform" 
             >
               <Image
                 loading="lazy"
@@ -144,7 +142,13 @@ export default function PromotionProduct() {
         {/* Product Cards Row */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Samsung Card */}
-          <div className="bg-blue-50 rounded-lg p-6 flex flex-col md:flex-row items-center">
+          <div
+            className={`bg-blue-50 rounded-lg p-6 flex flex-col md:flex-row items-center transition-all duration-500 ${
+              isHovered.samsung ? "shadow-md scale-[1.01]" : "shadow-sm"
+            }`}
+            onMouseEnter={() => setIsHovered({ ...isHovered, samsung: true })}
+            onMouseLeave={() => setIsHovered({ ...isHovered, samsung: false })}
+          >
             <div className="md:w-2/5 mb-4 md:mb-0">
               <Image
                 width={320}
@@ -168,7 +172,13 @@ export default function PromotionProduct() {
           </div>
 
           {/* Google Pixel Card */}
-          <div className="bg-orange-50 rounded-lg p-6 flex flex-col md:flex-row items-center">
+          <div
+            className={`bg-orange-50 rounded-lg p-6 flex flex-col md:flex-row items-center transition-all duration-500 ${
+              isHovered.google ? "shadow-md scale-[1.01]" : "shadow-sm"
+            }`}
+            onMouseEnter={() => setIsHovered({ ...isHovered, google: true })}
+            onMouseLeave={() => setIsHovered({ ...isHovered, google: false })}
+          >
             <div className="md:w-3/5 mb-4 md:mb-0 order-2 md:order-1">
               <p className="text-blue-900 font-medium">
                 {productData[2].product}
