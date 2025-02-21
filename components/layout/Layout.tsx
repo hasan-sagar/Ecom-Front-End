@@ -1,30 +1,3 @@
-// import React from "react";
-// import AppNavbar from "./appNavbar/AppNavbar";
-// import AppMenu from "./appMenu/AppMenu";
-// import LandingPage from "./landingPage/LandingPage";
-// import PromotionProduct from "./promotionProduct/PromotionProduct";
-// import FlashSaleProduct from "./flashSaleCountdown/FlashSaleProduct";
-// import NewArrivalProduct from "./newArrivalProduct/NewArrivalProduct";
-// import MostSellingProduct from "./sellingProduct/MostSellingProduct";
-// import ShippingBenefitsBanner from "./shippingBenefitsBanner/ShippingBenefitsBanner";
-// import NewsletterSubscription from "./newsletterSubscription/NewsletterSubscription ";
-
-// export default function AppLayout() {
-//   return (
-//     <>
-//       <AppNavbar />
-//       <AppMenu />
-//       <LandingPage />
-//       <NewArrivalProduct />
-//       <PromotionProduct />
-//       <FlashSaleProduct />
-//       <MostSellingProduct />
-//       <ShippingBenefitsBanner />
-//       <NewsletterSubscription />
-//     </>
-//   );
-// }
-
 "use client";
 import React from "react";
 import { usePathname } from "next/navigation";
@@ -37,9 +10,7 @@ import NewArrivalProduct from "./newArrivalProduct/NewArrivalProduct";
 import MostSellingProduct from "./sellingProduct/MostSellingProduct";
 import ShippingBenefitsBanner from "./shippingBenefitsBanner/ShippingBenefitsBanner";
 import NewsletterSubscription from "./newsletterSubscription/NewsletterSubscription ";
-import Footer from "./footer/Footer";
-
-
+import Footer from "../ui/footer/Footer";
 
 export default function AppLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -57,11 +28,11 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
           <FlashSaleProduct />
           <MostSellingProduct />
           <ShippingBenefitsBanner />
+          <NewsletterSubscription />
         </>
       ) : (
         children
       )}
-      <NewsletterSubscription />
       <Footer />
     </>
   );
