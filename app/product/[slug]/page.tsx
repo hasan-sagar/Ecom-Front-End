@@ -1,7 +1,8 @@
 import React from 'react';
+import {use} from 'react';
+export default  function SingleProductPage({params}: {params: Promise<{ slug: string }>}) {
 
-export default function SingleProductPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
+  const { slug } = use (params);
   console.log(slug);
 
   return (
