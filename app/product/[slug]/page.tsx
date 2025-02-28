@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+// import React, { useState } from 'react';
 import { use } from 'react';
 import Image from 'next/image';
 
@@ -8,7 +8,7 @@ export default function SingleProductPage({ params }: { params: Promise<{ slug: 
   const { slug } = use(params);
   console.log(slug);
 
-  const [quantity, setQuantity] = useState(1);
+  // const [quantity, setQuantity] = useState(1);
 
   return (
     <div>
