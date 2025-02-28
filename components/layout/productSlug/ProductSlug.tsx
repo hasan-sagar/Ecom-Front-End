@@ -14,8 +14,8 @@ import {
 import ProductSlugHeader from "@/components/ui/productSlug/ProductSlugHeader";
 
 export default function ProductSlug() {
-//   const { slug } = use(params);
-//   console.log(slug);
+  //   const { slug } = use(params);
+  //   console.log(slug);
 
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState("description");
@@ -31,7 +31,6 @@ export default function ProductSlug() {
 
   // Related products
 
-
   // Function to handle quantity changes
   const handleQuantityChange = (type: "increase" | "decrease") => {
     if (type === "decrease" && quantity > 1) {
@@ -43,30 +42,32 @@ export default function ProductSlug() {
 
   return (
     <div className="bg-white">
-    <ProductSlugHeader />
+      <ProductSlugHeader />
 
       {/* Product Section */}
-      <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 mb-12">
-        <div className="flex flex-col lg:flex-row gap-12">
+      <div className="max-w-screen-xl mx-auto px-10 mb-12 pt-10">
+        <div className="flex flex-col lg:flex-row justify-between gap-20">
           {/* Product Gallery */}
-          <div className="lg:w-[40%]">
-            <div className="mb-3 bg-gray-100 rounded-lg overflow-hidden">
+          {/* Product Gallery */}
+          <div className="lg:w-[50%]">
+            <div className="mb-3 bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center min-h-[450px]">
               <Image
                 src={productImages[selectedImage]}
                 alt="Product"
                 width={450}
                 height={450}
-                className=" h-auto object-contain p-8"
+                className="w-auto h-auto max-w-full max-h-[450px] object-contain p-8"
+                priority
               />
             </div>
             <div className="flex gap-2 overflow-x-auto">
               {productImages.map((img, index) => (
                 <div
                   key={index}
-                  className={`cursor-pointer p-2 border rounded-md ${
+                  className={`cursor-pointer p-2 border rounded-md flex-shrink-0 ${
                     selectedImage === index
                       ? "border-blue-500"
-                      : "border-gray-200"
+                      : "border-gray-200 hover:border-blue-300"
                   }`}
                   onClick={() => setSelectedImage(index)}
                 >
@@ -75,6 +76,7 @@ export default function ProductSlug() {
                     alt={`Product thumbnail ${index + 1}`}
                     width={80}
                     height={80}
+                    className="w-20 h-20 object-contain"
                   />
                 </div>
               ))}
@@ -83,7 +85,7 @@ export default function ProductSlug() {
 
           {/* Product Info */}
           <div className="lg:w-1/2">
-            <h1 className="text-3xl font-bold mb-2">
+            <h1 className="text-4xl font-bold mb-5">
               Apple iMac M1 24-inch 2021
             </h1>
 
@@ -114,8 +116,6 @@ export default function ProductSlug() {
             </div>
 
             <div className="border-t border-b py-6 mb-6">
-
-
               {/* Quantity */}
               <div className="mb-6">
                 <span className="font-medium block mb-2">Quantity:</span>
@@ -155,8 +155,6 @@ export default function ProductSlug() {
                 <FaShareAlt size={18} />
               </button>
             </div>
-
-            
           </div>
         </div>
       </div>
@@ -287,7 +285,6 @@ export default function ProductSlug() {
                       </div>
                       <p className="text-gray-500 mt-1">Based on 127 reviews</p>
                     </div>
-
                   </div>
 
                   <div className="flex flex-col lg:flex-row gap-8">
@@ -309,7 +306,6 @@ export default function ProductSlug() {
                                 February 12, 2025
                               </p>
                             </div>
-                            
                           </div>
                           <div className="flex text-yellow-400">
                             <FaStar />
@@ -352,8 +348,6 @@ export default function ProductSlug() {
                             </div>
                           </div>
 
-
-
                           {/* Review Content */}
                           <div>
                             <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -394,7 +388,6 @@ export default function ProductSlug() {
                             type="submit"
                             className=" bg-blue-600 hover:bg-blue-700 text-white py-3 px-5 rounded-md font-medium transition-all duration-200 transform hover:scale-105 flex items-center justify-center gap-2"
                           >
-                            
                             Submit Review
                           </button>
                         </form>
