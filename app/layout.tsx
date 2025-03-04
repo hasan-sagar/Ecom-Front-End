@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import NextTopLoader from "nextjs-toploader";
 
 export const metadata: Metadata = {
   title: "Ecom Exute Shop",
@@ -13,7 +14,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <NextTopLoader color="#3C50E0" height={4} />
+        {children}
+      </body>
     </html>
   );
 }

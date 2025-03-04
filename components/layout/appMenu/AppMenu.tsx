@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 import { FaRegHeart } from "react-icons/fa";
 
@@ -8,35 +9,38 @@ export default function AppMenu() {
         <div className="w-full sm:w-auto">
           <ul className="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-6">
             <li className="border-b-2 border-transparent ">
-              <a
-                href="#"
+              <Link
+                href="/"
                 className="hover:text-blue-500 text-custom-sm font-medium text-dark flex xl:py-6"
               >
                 Home
-              </a>
+              </Link>
             </li>
             <li className="border-b-2 border-transparent ">
-              <a
-                href="#"
+              <Link
+                href="/shop"
                 className="hover:text-blue-500 text-custom-sm font-medium text-dark flex xl:py-6"
               >
                 Shops
-              </a>
+              </Link>
             </li>
             <li className="border-b-2 border-transparent ">
-              <a
+              <Link
                 href="#"
                 className="hover:text-blue-500 text-custom-sm font-medium text-dark flex xl:py-6"
               >
                 Categories
-              </a>
+              </Link>
             </li>
           </ul>
         </div>
         <div className="w-full sm:w-auto mt-4 sm:mt-0 border-b-2 border-transparent">
-          <p className="flex items-center gap-2 hover:text-blue-500 text-custom-sm font-medium text-dark xl:py-6">
+          <Link
+            href="#"
+            className="flex items-center gap-2 hover:text-blue-500 text-custom-sm font-medium text-dark xl:py-6"
+          >
             <FaRegHeart /> Wish list
-          </p>
+          </Link>
         </div>
       </div>
     </nav>
