@@ -12,9 +12,5 @@ export default function SingleProductPage({
   const { slug } = use(params);
   console.log(slug);
 
-
-
-  return (
-    <ProductSlug />
-  )
+  return <ProductSlug />;
 }
