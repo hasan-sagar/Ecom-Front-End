@@ -32,7 +32,7 @@ export default function Sidebar() {
     <>
       {/* Responsive Toggle Button for Mobile */}
       <button
-        className="md:hidden fixed top-4 left-4 z-50 p-3 bg-gray-800 text-white rounded-full shadow-md hover:bg-gray-700 transition-colors duration-200"
+        className="md:hidden fixed top-3 left-4 z-50 p-2 bg-secondary text-white rounded-full shadow-md transition-colors duration-200"
         onClick={() => setIsSidebarOpen(!isSidebarOpen)}
         aria-label="Toggle Sidebar"
       >
@@ -46,7 +46,7 @@ export default function Sidebar() {
         } md:translate-x-0 z-40 border-r shadow-sm`}
       >
         <div className="p-4 border-b">
-          <h1 className="text-lg font-medium uppercase text-start ml-4">
+          <h1 className="text-lg text-primary font-semibold uppercase text-start ml-4">
             Admin Panel
           </h1>
         </div>
@@ -67,7 +67,9 @@ export default function Sidebar() {
                     >
                       <div className="flex items-center space-x-3">
                         <item.icon className="text-sm" />
-                        <span>{item.label}</span>
+                        <Link href={item.href}>
+                          <span className="text-sm">{item.label}</span>
+                        </Link>
                       </div>
                       {item.subItems && (
                         <MdKeyboardArrowDown
@@ -78,18 +80,18 @@ export default function Sidebar() {
                       )}
                     </button>
                     {item.subItems && openSubMenu === item.label && (
-                      <ul className="pl-8 mt-2 space-y-1">
+                      <ul className="pl-6 mt-2 space-y-1">
                         {item.subItems.map((subItem) => (
                           <li key={subItem.label}>
                             <Link
                               href={subItem.href}
                               className={`flex items-center space-x-3 px-4 py-2.5 rounded-lg hover:bg-gray-100 transition-colors ${
                                 pathname === subItem.href
-                                  ? "bg-blue-50 text-blue-600"
+                                  ? "bg-blue-50 text-primary"
                                   : "text-gray-700"
                               }`}
                             >
-                              <span>{subItem.label}</span>
+                              <span className="text-sm">{subItem.label}</span>
                             </Link>
                           </li>
                         ))}
