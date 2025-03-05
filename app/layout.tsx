@@ -15,7 +15,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body>
-        <NextTopLoader color="#3C50E0" height={4} />
+        <NextTopLoader showSpinner={false} color="#3C50E0" height={4} />
         {children}
       </body>
     </html>
