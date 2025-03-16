@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import NextTopLoader from "nextjs-toploader";
+import NextAuthSessionProvider from "@/components/providers/NextAuthSessionProvider";
 
 export const metadata: Metadata = {
   title: "Ecom Exute Shop",
@@ -16,7 +17,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <NextTopLoader showSpinner={false} color="#3C50E0" height={4} />
-        {children}
+        <NextAuthSessionProvider>{children}</NextAuthSessionProvider>
       </body>
     </html>
   );

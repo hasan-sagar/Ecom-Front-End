@@ -1,19 +1,18 @@
+"use client";
 import DashboardLayout from "@/components/layout/dashboardLayout/DashboardLayout";
-import { Metadata } from "next";
 import React from "react";
+import NextAuthSessionProvider from "@/components/providers/NextAuthSessionProvider";
 
 interface SimpleLayoutProps {
   children: React.ReactNode;
 }
 
-export const metadata: Metadata = {
-  title: "Ecom Shop Admin Panel",
-  description: "Ecom Shop Admin Panel",
-};
 export default function SimpleLayout({ children }: SimpleLayoutProps) {
   return (
     <React.Fragment>
+      {/* <NextAuthSessionProvider> */}
       <DashboardLayout>{children}</DashboardLayout>
+      {/* </NextAuthSessionProvider> */}
     </React.Fragment>
   );
 }
