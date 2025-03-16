@@ -1,6 +1,16 @@
+"use client";
+import { useSession } from "next-auth/react";
 import React from "react";
 
-export default function page() {
+export default function DashboardPage() {
+  const { data: session, status } = useSession();
+
+  console.log("admin dashboard data", session, status);
+
+  if (status === "unauthenticated") {
+    return <p>You are not signed in.</p>;
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <title>Admin | Dashboard</title>
