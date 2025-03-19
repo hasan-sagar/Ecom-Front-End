@@ -43,7 +43,10 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Missing credentials");
           }
 
-          const user = await adminLogin(credentials.email, credentials.password);
+          const user = await adminLogin(
+            credentials.email,
+            credentials.password
+          );
 
           if (!user) {
             throw new Error("Invalid credentials");
@@ -81,8 +84,8 @@ export const authOptions: NextAuthOptions = {
       return session;
     },
 
-    async redirect() {
-      return "/admin/dashboard";
-    },
+    // async redirect() {
+    //   return "/";
+    // },
   },
 };
