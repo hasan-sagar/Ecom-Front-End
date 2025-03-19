@@ -37,6 +37,29 @@ export const userLogin = async (email: string, password: string) => {
 
 export const adminLogin = async (email: string, password: string) => {
   try {
+    //Check is user exists
+    //Check if user is admin
+    const user = await prisma.user.findFirst({
+      where: {
+        email: email,
+        password: password,
+        
+      },
+      select :{
+        id: true,
+        email: true,
+        role: true,
+      }
+    })
+    const checkRole = user?.role === "admin";
+    if (!user || !checkRole) {
+      return null;
+    } else{
+      return {
+        ...user,
+        id: user.id.toString(),
+      } as User;
+    }
   } catch (error) {
     throw new Error("Wrong Credentials");
   }
