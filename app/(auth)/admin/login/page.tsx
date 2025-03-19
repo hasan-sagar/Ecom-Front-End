@@ -8,10 +8,12 @@ export default function AdminLoginPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    signIn ("Credentials-Admin-Login", {
+    signIn("Credentials-Admin-Login", {
       email,
-      password
-    })
+      password,
+      redirect: true,
+      callbackUrl: "/admin/dashboard",
+    });
   };
 
   return (

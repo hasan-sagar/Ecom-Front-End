@@ -9,7 +9,12 @@ export default function LoginPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    signIn("Credentials-Login", { email, password });
+    signIn("Credentials-Login", {
+      email,
+      password,
+      redirect: true,
+      callbackUrl: "/",
+    });
   };
 
   return (
