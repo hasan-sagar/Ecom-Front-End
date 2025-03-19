@@ -1,6 +1,6 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { userLogin } from "./loginAction";
+import { adminLogin, userLogin } from "./loginAction";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -43,7 +43,7 @@ export const authOptions: NextAuthOptions = {
             throw new Error("Missing credentials");
           }
 
-          const user = await userLogin(credentials.email, credentials.password);
+          const user = await adminLogin(credentials.email, credentials.password);
 
           if (!user) {
             throw new Error("Invalid credentials");
@@ -82,7 +82,7 @@ export const authOptions: NextAuthOptions = {
     },
 
     async redirect() {
-      return "/";
+      return "/admin/dashboard";
     },
   },
 };

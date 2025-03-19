@@ -1,4 +1,5 @@
 "use client";
+import { signIn } from "next-auth/react";
 import React, { useState } from "react";
 
 export default function AdminLoginPage() {
@@ -7,6 +8,10 @@ export default function AdminLoginPage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    signIn ("Credentials-Admin-Login", {
+      email,
+      password
+    })
   };
 
   return (
