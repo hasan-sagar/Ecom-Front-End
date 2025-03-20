@@ -7,7 +7,15 @@ export default function Header() {
       <h1 className="hidden md:block">Welcome Admin</h1>
       <div className="flex items-center space-x-4 ml-auto">
         <span className="text-gray-600">John Doe</span>
-        <span onClick={() => signOut()} className="text-gray-600">
+        <span
+          onClick={() =>
+            signOut({
+              redirect: true,
+              callbackUrl: "/admin/login",
+            })
+          }
+          className="text-gray-600"
+        >
           LogOut
         </span>
         <Image

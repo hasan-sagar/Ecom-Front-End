@@ -1,12 +1,21 @@
+"use client";
 import Header from "@/components/ui/admin-panel/Header";
 import Sidebar from "@/components/ui/admin-panel/Sidebar";
-import React from "react";
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
 
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const router = useRouter();
+
+  const { data: session } = useSession() as any;
+  if (session?.user?.role !== "admin") {
+    router.back();
+  }
+
   return (
     <div className="flex h-screen">
       {/* Sidebar */}

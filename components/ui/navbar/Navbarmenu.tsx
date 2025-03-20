@@ -9,20 +9,29 @@ function NavbarMenu() {
   return (
     <div>
       {openMenu ? (
-        <AiOutlineClose size={30} onClick={() => setOpenMenu(false)} />
+        <AiOutlineClose size={25} onClick={() => setOpenMenu(false)} />
       ) : (
-        <AiOutlineMenu size={30} onClick={() => setOpenMenu(true)} />
+        <AiOutlineMenu size={25} onClick={() => setOpenMenu(true)} />
       )}
 
-      {/* responsive menu click */}
+      {/* Responsive menu */}
       <div
-        className={`fixed top-20 inset-0 bg-backdrop bg-opacity-90 flex flex-col items-center justify-center z-50 transition-opacity duration-300 ease-in-out ${
-          openMenu ? "opacity-100 visible" : "opacity-0 invisible"
+        className={`fixed top-0 left-0 w-full h-full bg-white z-50 flex flex-col items-center justify-center transition-transform duration-300 ${
+          openMenu ? "translate-x-0" : "translate-x-full"
         }`}
       >
+        {/* Close Button */}
+        <button
+          className="absolute top-5 right-5 text-3xl"
+          onClick={() => setOpenMenu(false)}
+        >
+          <AiOutlineClose />
+        </button>
+
+        {/* Navigation Links */}
         <ul
-          onClick={() => setOpenMenu(!openMenu)}
-          className="flex flex-col justify-between items-center gap-8 font-medium text-2xl text-dark"
+          onClick={() => setOpenMenu(false)}
+          className="flex flex-col items-center gap-6 text-xl text-dark"
         >
           <li>
             <Link href="/">Home</Link>
