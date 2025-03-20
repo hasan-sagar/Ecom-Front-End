@@ -3,6 +3,7 @@ import Header from "@/components/ui/admin-panel/Header";
 import Sidebar from "@/components/ui/admin-panel/Sidebar";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 export default function DashboardLayout({
   children,
@@ -10,10 +11,25 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const router = useRouter();
+  const { data: session, status } = useSession() as any;
 
-  const { data: session } = useSession() as any;
-  if (session?.user?.role !== "admin") {
-    router.back();
+  useEffect(() => {
+    if (status === "loading") return;
+
+    const role = session?.user?.role;
+    if (role !== "admin") {
+      router.push("/unauthorized");
+      return;
+    }
+  }, [session, status, router]);
+
+  // Show loading state or nothing while checking authentication
+  if (status === "loading") {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        Loading...
+      </div>
+    );
   }
 
   return (
