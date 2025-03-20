@@ -1,7 +1,11 @@
 "use client";
-import DashboardLayout from "@/components/layout/dashboardLayout/DashboardLayout";
+import dynamic from "next/dynamic";
 import React from "react";
-import NextAuthSessionProvider from "@/components/providers/NextAuthSessionProvider";
+
+const DashboardLayout = dynamic(
+  () => import("@/components/layout/dashboardLayout/DashboardLayout"),
+  { ssr: false }
+);
 
 interface SimpleLayoutProps {
   children: React.ReactNode;
@@ -10,9 +14,7 @@ interface SimpleLayoutProps {
 export default function SimpleLayout({ children }: SimpleLayoutProps) {
   return (
     <React.Fragment>
-      {/* <NextAuthSessionProvider> */}
       <DashboardLayout>{children}</DashboardLayout>
-      {/* </NextAuthSessionProvider> */}
     </React.Fragment>
   );
 }

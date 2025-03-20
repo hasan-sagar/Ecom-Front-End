@@ -6,7 +6,6 @@ export default function SearchBar() {
   const [query, setQuery] = useState("");
   const [isFocused, setIsFocused] = useState(false);
 
-  // Dummy suggestions for demonstration purposes
   const suggestions = [
     "Latest Laptop Deals",
     "Trending Smartwatches",
@@ -25,7 +24,7 @@ export default function SearchBar() {
   };
 
   return (
-    <div className="relative w-full max-w-[30rem] hidden lg:block">
+    <div className="relative w-full max-w-[30rem]">
       <form
         onSubmit={handleSubmit}
         className="flex items-center border border-gray-300 rounded-md shadow-sm bg-white overflow-hidden"

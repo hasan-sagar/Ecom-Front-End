@@ -73,7 +73,12 @@ export default function LoginPage() {
         </div>
 
         <div className="text-center mt-4">
-          <button className="w-full bg-[#F9FAFB] text-[#606882] py-4 border border-gray-300 rounded-lg hover:text-dark hover:bg-gray-200 flex items-center justify-center transition duration-200">
+          <button
+            onClick={() => {
+              signIn("google", { redirect: true, callbackUrl: "/" });
+            }}
+            className="w-full bg-[#F9FAFB] text-[#606882] py-4 border border-gray-300 rounded-lg hover:text-dark hover:bg-gray-200 flex items-center justify-center transition duration-200"
+          >
             <Image
               src="/google.svg"
               width={20}
