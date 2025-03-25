@@ -8,14 +8,15 @@ datasource db {
   directUrl = env("DIRECT_URL")
 }
 
-
 model brand {
-  id         String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at DateTime  @default(now()) @db.Timestamp(6)
-  brand_name String?   @unique @db.VarChar
-  product    product[]
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at      DateTime  @default(now()) @db.Timestamp(6)
+  brand_name      String?   @unique @db.VarChar
+  brand_image_url String?   @db.VarChar
+  user_id         String    @db.Uuid
+  user            user      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  product         product[]
 }
-
 
 model category {
   id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -23,7 +24,6 @@ model category {
   catrgory_name String?   @unique @db.VarChar
   product       product[]
 }
-
 
 model product {
   id                  String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -42,7 +42,6 @@ model product {
   review              review[]
 }
 
-
 model product_image {
   id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at DateTime @default(now()) @db.Timestamp(6)
@@ -50,7 +49,6 @@ model product_image {
   product_id String?  @db.Uuid
   product    product? @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
-
 
 model review {
   id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -61,7 +59,6 @@ model review {
   product         product? @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
-
 model user {
   id           String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   name         String?   @db.VarChar
@@ -71,5 +68,6 @@ model user {
   created_at   DateTime  @default(now()) @db.Timestamp(6)
   role         String    @db.VarChar
   password     String?   @db.VarChar
+  brand        brand[]
   product      product[]
 }
