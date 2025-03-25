@@ -1,18 +1,29 @@
 "use client";
 import { signIn } from "next-auth/react";
 import React, { useState } from "react";
+import toast from "react-hot-toast";
+import { FaSpinner } from "react-icons/fa";
 
 export default function AdminLoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    if (!email || !password) {
+      setIsLoading(false);
+      toast.error("Please fill all the fields");
+      return;
+    }
     signIn("Credentials-Admin-Login", {
       email,
       password,
       redirect: true,
       callbackUrl: "/admin/dashboard",
+    }).then(() => {
+      setIsLoading(false);
     });
   };
 
@@ -62,39 +73,12 @@ export default function AdminLoginPage() {
 
           <button
             type="submit"
-            className="w-full bg-textdark4 text-[#fff] py-3 rounded-lg hover:bg-blue-700 transition duration-200"
+            className="w-full flex justify-center items-center bg-textdark4 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-200 gap-2"
           >
-            Sign In
+            {isLoading && <FaSpinner size={20} className="animate-spin" />}
+            <span> Sign In</span>
           </button>
         </form>
-
-        {/* <div className="text-center mt-4">
-          <a href="#" className="text-textdark3 text-base hover:text-blue-600">
-            Forgot your password?
-          </a>
-        </div> */}
-
-        {/* <div className="text-center mt-4">
-          <button className="w-full bg-[#F9FAFB] text-[#606882] py-4 border border-gray-300 rounded-lg hover:text-dark hover:bg-gray-200 flex items-center justify-center transition duration-200">
-            <Image
-              src="/google.svg"
-              width={20}
-              height={20}
-              alt="Google logo"
-              className="mr-2"
-            />
-            Sign In with Google
-          </button>
-        </div>
-
-        <div className="text-center mt-4">
-          <p className="text-[#606882]">
-            Don&apos;t have an account?{" "}
-            <a href="#" className="text-textdark4 hover:text-blue-600">
-              Sign Up Now!
-            </a>
-          </p>
-        </div> */}
       </section>
     </div>
   );

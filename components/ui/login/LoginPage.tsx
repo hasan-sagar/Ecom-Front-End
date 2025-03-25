@@ -2,18 +2,29 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { signIn } from "next-auth/react";
+import toast from "react-hot-toast";
+import { FaSpinner } from "react-icons/fa";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    if (!email || !password) {
+      setIsLoading(false);
+      toast.error("Please fill all the fields");
+      return;
+    }
     signIn("Credentials-Login", {
       email,
       password,
       redirect: true,
       callbackUrl: "/",
+    }).then(() => {
+      setIsLoading(false);
     });
   };
 
@@ -60,9 +71,10 @@ export default function LoginPage() {
 
           <button
             type="submit"
-            className="w-full bg-textdark4 text-[#fff] py-3 rounded-lg hover:bg-blue-700 transition duration-200"
+            className="w-full flex justify-center items-center bg-textdark4 text-white py-3 rounded-lg hover:bg-blue-700 transition duration-200 gap-2"
           >
-            Sign In
+            {isLoading && <FaSpinner size={20} className="animate-spin" />}
+            <span> Sign In</span>
           </button>
         </form>
 
