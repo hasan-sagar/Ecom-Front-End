@@ -7,6 +7,7 @@ import { BiTrash } from "react-icons/bi";
 import { FaSpinner } from "react-icons/fa";
 import { PiPencilSimpleLineDuotone } from "react-icons/pi";
 import PaginationComponent from "../pagination/Pagination";
+import AddBrandsPage from "./AddBrandsPage";
 
 interface Brands {
   id: string;
@@ -19,6 +20,13 @@ export default function BrandsPage() {
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [pageSize, setPageSize] = useState<number>(10);
   const [query, setQuery] = useState<string>("");
+
+  //add brand modal state
+  const [modalOpen, setModalOpen] = useState<boolean>(false);
+  //modal close function
+  const handleModalClose = () => {
+    setModalOpen(false);
+  };
 
   //fetch brands
   const { data, isLoading, error, refetch } = useQuery({
@@ -78,7 +86,10 @@ export default function BrandsPage() {
           className="px-4 py-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 max-w-sm rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary transition duration-300"
           placeholder="Search"
         />
-        <button className="bg-primary w-full sm:w-1/2 md:w-1/4 lg:w-40 text-white px-5 py-2.5 rounded-md shadow-md hover:bg-primary/95 transition">
+        <button
+          onClick={() => setModalOpen(true)}
+          className="bg-primary w-full sm:w-1/2 md:w-1/4 lg:w-40 text-white px-5 py-2.5 rounded-md shadow-md hover:bg-primary/95 transition"
+        >
           + Add Brand
         </button>
       </header>
@@ -146,6 +157,9 @@ export default function BrandsPage() {
         onPageChange={onPageChange}
         currentPage={currentPage}
       />
+
+      {/* Add brand modal */}
+      <AddBrandsPage isModalOpen={modalOpen} onClose={handleModalClose} />
     </div>
   );
 }
