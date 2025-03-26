@@ -1,3 +1,4 @@
+import { uploadImage } from "@/app/lib/cloudinary";
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -6,22 +7,22 @@ export async function POST(req: NextRequest) {
   const token = await getToken({ req });
 
   //validate token
-  //   if (!token) {
-  //     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  //   }
+    if (!token) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
 
-  //   const adminId = token.id;
+    const adminId = token.id;
 
-  //   if (!adminId) {
-  //     return NextResponse.json(
-  //       { message: "Unauthorized: Missing user ID in token" },
-  //       { status: 401 }
-  //     );
-  //   }
+    if (!adminId) {
+      return NextResponse.json(
+        { message: "Unauthorized: Missing user ID in token" },
+        { status: 401 }
+      );
+    }
 
   //parse body data
   const bodyData = await req.json();
-  const { brand_name } = bodyData;
+  const { brand_name, brand_image_url } = bodyData;
 
   //brand_name required
   if (!brand_name) {
@@ -29,17 +30,34 @@ export async function POST(req: NextRequest) {
       { message: "Brand name is required" },
       { status: 400 }
     );
-  }
+  } if(!brand_image_url){
+    return NextResponse.json(
+      { message: "Brand image is required" },
+      { status: 400 }
+    )
+  } 
 
   //check brand exist or not
   const checkBrand = await checkBrandExist(brand_name);
   if (checkBrand.length > 0) {
     return NextResponse.json({ message: "Brand name exist" }, { status: 400 });
   }
-
+  let imageUrl : string = "" ;
+  if(brand_image_url){
+    try {
+      imageUrl = await uploadImage(brand_image_url);
+    } catch (error) {
+      return NextResponse.json({
+        message: "Failed to upload image", 
+        
+      },{
+        status: 400
+      })
+    }
+  }
   await prisma.$queryRaw`
     INSERT INTO brand (brand_name,brand_image_url,user_id)
-    values(${brand_name},"Dummy Url" , ${"efe98ada-0863-4609-b0c1-9cde300e64af"}::uuid)
+    values(${brand_name}, ${imageUrl} , ${adminId}::uuid)
   `;
 
   return NextResponse.json(checkBrand);

@@ -1,4 +1,6 @@
 "use client";
+import { createBrand } from "@/services/brand-api";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { IoIosCheckmark, IoIosClose } from "react-icons/io";
 
@@ -22,6 +24,13 @@ export default function AddBrandsPage({
       reader.onerror = (error) => reject(error);
     });
   };
+//   const createBrandMutation = useMutation({
+//     mutationFn: async (brand_name: string, brand_image_url: string) => {
+//         return await createBrand (brand_name, brand_image_url);
+//     },
+   
+
+// });
 
   //submit brand data
   const handleSubmitBrand = async (event: React.FormEvent) => {
