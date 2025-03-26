@@ -2,6 +2,10 @@ import prisma from "@/app/lib/prisma";
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
+//table paginated
+// table searching (brand name) + paginated
+//exute.com/api/brands/page=2&pageSize=10&query=""
+
 interface Brands {
   id: string;
   brand_name: string;
@@ -47,7 +51,7 @@ export async function GET(req: NextRequest) {
       FROM brand
       WHERE brand.user_id=${adminId}::uuid
       AND LOWER(brand.brand_name) LIKE ${`%${query}%`}
-      ORDER BY id
+      ORDER BY brand_name
       LIMIT ${pageSize} OFFSET ${offset}
     `;
 

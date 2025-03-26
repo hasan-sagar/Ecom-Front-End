@@ -28,7 +28,7 @@ export default function BrandsPage() {
     setModalOpen(false);
   };
 
-  //fetch brands
+  //fetch brands api
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["brands", currentPage, pageSize, query],
     queryFn: () => getAllBrands(currentPage, pageSize, query),

@@ -11,10 +11,27 @@ export default function AddBrandsPage({
 }) {
   //brand name state
   const [brandName, setBrandName] = useState<string>("");
+  const [selectFile, setSelectFile] = useState<File | null | any>();
+
+  //image convertion
+  const convertImageToBase64 = (file: File) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
 
   //submit brand data
-  const handleSubmitBrand = (event: React.FormEvent) => {
+  const handleSubmitBrand = async (event: React.FormEvent) => {
     event.preventDefault();
+    const formatImage = await convertImageToBase64(selectFile);
+
+    console.log({
+      brandName,
+      formatImage,
+    });
   };
   return (
     isModalOpen && (
@@ -39,6 +56,18 @@ export default function AddBrandsPage({
               placeholder="Enter brand name"
               required
               className="w-full px-3 py-3 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500 sm:text-sm"
+            />
+
+            <input
+              onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                setSelectFile(
+                  event.target.files ? event.target.files[0] : null
+                );
+              }}
+              accept="image/*"
+              type="file"
+              name="file"
+              id="file"
             />
 
             <div className="mt-auto flex flex-col sm:flex-row sm:justify-end space-y-2 sm:space-y-0 sm:space-x-2">
