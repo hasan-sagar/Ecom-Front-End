@@ -1,7 +1,10 @@
 "use client";
 import { createBrand } from "@/services/brand-api";
 import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { FaSpinner } from "react-icons/fa";
 import { IoIosCheckmark, IoIosClose } from "react-icons/io";
 
 export default function AddBrandsPage({
@@ -11,11 +14,11 @@ export default function AddBrandsPage({
   isModalOpen: boolean;
   onClose: () => void;
 }) {
-  //brand name state
+  // Brand name state
   const [brandName, setBrandName] = useState<string>("");
-  const [selectFile, setSelectFile] = useState<File | null | any>();
+  const [selectFile, setSelectFile] = useState<File | null>(null);
 
-  //image convertion
+  // Image conversion to base64
   const convertImageToBase64 = (file: File) => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -24,24 +27,51 @@ export default function AddBrandsPage({
       reader.onerror = (error) => reject(error);
     });
   };
-//   const createBrandMutation = useMutation({
-//     mutationFn: async (brand_name: string, brand_image_url: string) => {
-//         return await createBrand (brand_name, brand_image_url);
-//     },
-   
 
-// });
+  // Create brand API mutation
+  const createBrandMutation = useMutation({
+    mutationFn: async ({
+      brand_name,
+      brand_image_url,
+    }: {
+      brand_name: string;
+      brand_image_url: string;
+    }) => {
+      return await createBrand(brand_name, brand_image_url);
+    },
+    onSuccess: (data) => {
+      onClose();
+      toast.success(data.message);
+      return;
+    },
+    onError: (error: any) => {
+      if (axios.isAxiosError(error)) {
+        toast.error(`${error.response?.data.message}`);
+      } else {
+        toast.error(`${error.message}`);
+      }
+    },
+  });
 
-  //submit brand data
+  // Submit brand data
   const handleSubmitBrand = async (event: React.FormEvent) => {
     event.preventDefault();
+
+    // Validate file selection
+    if (!selectFile) {
+      return toast.error("Image required");
+    }
+
+    // Convert image to base64
     const formatImage = await convertImageToBase64(selectFile);
 
-    console.log({
-      brandName,
-      formatImage,
+    // Call the mutation to create the brand
+    createBrandMutation.mutate({
+      brand_name: brandName,
+      brand_image_url: formatImage as string,
     });
   };
+
   return (
     isModalOpen && (
       <div className="fixed inset-0 bg-gray-700 bg-opacity-50 z-50 flex items-center justify-center p-4">
@@ -83,7 +113,7 @@ export default function AddBrandsPage({
               <button
                 onClick={onClose}
                 type="button"
-                className="inline-flex w-full sm:w-auto px-3 py-2  text-red-500"
+                className="inline-flex w-full sm:w-auto px-3 py-2 text-red-500"
               >
                 <IoIosClose size={25} />
                 Cancel
@@ -92,8 +122,14 @@ export default function AddBrandsPage({
                 type="submit"
                 className="inline-flex w-full sm:w-auto px-3 py-2 text-primary"
               >
-                <IoIosCheckmark size={25} />
-                Save
+                {createBrandMutation.isPending ? (
+                  <FaSpinner size={20} className="animate-spin" />
+                ) : (
+                  <>
+                    <IoIosCheckmark size={25} />
+                    Save
+                  </>
+                )}
               </button>
             </div>
           </form>

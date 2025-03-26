@@ -13,7 +13,6 @@ export async function uploadImage(file: string) {
       folder: "exute_shop", // Optional: Organize images in a folder
       resource_type: "image",
     });
-    console.log(result)
     return result.secure_url; // Return the secure URL of the uploaded image
   } catch (error) {
     console.error("Error uploading image to Cloudinary:", error);
