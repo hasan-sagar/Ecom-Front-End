@@ -20,7 +20,7 @@ export const createBrand = async (
 ) => {
   const response = await axiosInstance.post("/brands/create", {
     brand_name: brand_name,
-    brand_image_url,
+    brand_image_url: brand_image_url,
   });
 
   return response.data;
