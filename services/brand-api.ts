@@ -25,3 +25,9 @@ export const createBrand = async (
 
   return response.data;
 };
+
+//delete brand api
+export const deleteBrand = async (brandId: string) => {
+  const response = await axiosInstance.delete(`/brands/${brandId}`);
+  return response.data;
+};

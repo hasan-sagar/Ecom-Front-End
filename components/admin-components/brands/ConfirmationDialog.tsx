@@ -1,6 +1,11 @@
 "use client";
 
+import { deleteBrand } from "@/services/brand-api";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
+import toast from "react-hot-toast";
 import { AiOutlineInfoCircle } from "react-icons/ai";
+import { FaSpinner } from "react-icons/fa";
 import { IoIosCheckmark, IoIosClose } from "react-icons/io";
 
 export default function ConfirmationDialog({
@@ -12,6 +17,30 @@ export default function ConfirmationDialog({
   onClose: () => void;
   brandId: string;
 }) {
+  const queryClient = useQueryClient();
+
+  //delete brand api
+  const deleteBrandMutation = useMutation({
+    mutationFn: async () => {
+      return await deleteBrand(brandId);
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+      onClose();
+    },
+    onError: (error: any) => {
+      if (axios.isAxiosError(error)) {
+        console.log(error);
+
+        toast.error(`${error.response?.data.message}`);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["brands"],
+      });
+    },
+  });
   return (
     isModalOpen && (
       <div className="fixed inset-0 bg-gray-900 bg-opacity-50 z-50 flex items-center justify-center p-3">
@@ -49,11 +78,18 @@ export default function ConfirmationDialog({
               Cancel
             </button>
             <button
+              onClick={() => deleteBrandMutation.mutate()}
               type="button"
               className="inline-flex w-full sm:w-auto px-3 py-2 text-red-500"
             >
-              <IoIosCheckmark size={25} />
-              Delete
+              {deleteBrandMutation.isPending ? (
+                <FaSpinner size={20} className="animate-spin" />
+              ) : (
+                <>
+                  <IoIosCheckmark size={25} />
+                  Delete
+                </>
+              )}
             </button>
           </div>
         </div>
