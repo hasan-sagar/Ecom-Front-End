@@ -18,7 +18,7 @@ export default function DashboardLayout({
 
     const role = session?.user?.role;
     if (role !== "admin") {
-      router.push("/unauthorized");
+      router.push("/");
       return;
     }
   }, [session, status, router]);

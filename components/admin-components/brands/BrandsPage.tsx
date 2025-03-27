@@ -9,6 +9,7 @@ import { PiPencilSimpleLineDuotone } from "react-icons/pi";
 import PaginationComponent from "../pagination/Pagination";
 import AddBrandsPage from "./AddBrandsPage";
 import ConfirmationDialog from "./ConfirmationDialog";
+import EditBrandsPage from "./EditBrandsPage";
 
 interface Brands {
   id: string;
@@ -27,14 +28,22 @@ export default function BrandsPage() {
   //brand confirmation modal state
   const [confirmationModalOpen, setConfirmationModalOpen] =
     useState<boolean>(false);
+  //brand edit modal state
+  const [editModalOpen, setEditModalOpen] = useState<boolean>(false);
   //modal close function
   const handleModalClose = () => {
+    //close modal for create
     setModalOpen(false);
+    //close modal for delete
     confirmationModalOpen && setConfirmationModalOpen(false);
+    //close modal for edit
+    editModalOpen && setEditModalOpen(false);
   };
 
   //seleccted brand id
   const selectedBrandId = useRef<string>("");
+  //selected brand name
+  const selectedBrandName = useRef<string>("");
 
   //fetch brands api
   const { data, isLoading, error, refetch } = useQuery({
@@ -144,12 +153,24 @@ export default function BrandsPage() {
                         {brandData.brand_image_url}
                       </Link>
                     </td>
+                    {/* action buttons */}
                     <td className="px-6 py-4 text-right">
-                      <button className="text-primary font-medium transition mr-4">
+                      {/* edit button */}
+                      <button
+                        //edit modal open true
+                        onClick={() => {
+                          setEditModalOpen(true);
+                          selectedBrandName.current = brandData.brand_name;
+                          selectedBrandId.current = brandData.id;
+                        }}
+                        className="text-primary font-medium transition mr-4"
+                      >
                         <PiPencilSimpleLineDuotone size={22} />
                       </button>
+                      {/* delete button */}
                       <button
                         onClick={() => {
+                          //save brand id to state
                           selectedBrandId.current = brandData.id;
                           setConfirmationModalOpen(true);
                         }}
@@ -180,6 +201,14 @@ export default function BrandsPage() {
         isModalOpen={confirmationModalOpen}
         onClose={handleModalClose}
         brandId={selectedBrandId.current}
+      />
+
+      {/* Brand edit modal */}
+      <EditBrandsPage
+        isEditModalOpen={editModalOpen}
+        onClose={handleModalClose}
+        brandId={selectedBrandId.current}
+        brandName={selectedBrandName.current}
       />
     </div>
   );

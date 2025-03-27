@@ -31,3 +31,12 @@ export const deleteBrand = async (brandId: string) => {
   const response = await axiosInstance.delete(`/brands/${brandId}`);
   return response.data;
 };
+
+//update brand api
+export const updateBrand = async (brandId: string, brandName: string) => {
+  const response = await axiosInstance.put(`brands/${brandId}`, {
+    brand_name: brandName,
+  });
+
+  return response.data;
+};
