@@ -2,12 +2,13 @@
 import { getAllBrands } from "@/services/brand-api";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { BiTrash } from "react-icons/bi";
 import { FaSpinner } from "react-icons/fa";
 import { PiPencilSimpleLineDuotone } from "react-icons/pi";
 import PaginationComponent from "../pagination/Pagination";
 import AddBrandsPage from "./AddBrandsPage";
+import ConfirmationDialog from "./ConfirmationDialog";
 
 interface Brands {
   id: string;
@@ -23,10 +24,17 @@ export default function BrandsPage() {
 
   //add brand modal state
   const [modalOpen, setModalOpen] = useState<boolean>(false);
+  //brand confirmation modal state
+  const [confirmationModalOpen, setConfirmationModalOpen] =
+    useState<boolean>(false);
   //modal close function
   const handleModalClose = () => {
     setModalOpen(false);
+    confirmationModalOpen && setConfirmationModalOpen(false);
   };
+
+  //seleccted brand id
+  const selectedBrandId = useRef<string>("");
 
   //fetch brands api
   const { data, isLoading, error, refetch } = useQuery({
@@ -140,7 +148,13 @@ export default function BrandsPage() {
                       <button className="text-primary font-medium transition mr-4">
                         <PiPencilSimpleLineDuotone size={22} />
                       </button>
-                      <button className="text-red-600 hover:text-red-800 font-medium transition">
+                      <button
+                        onClick={() => {
+                          selectedBrandId.current = brandData.id;
+                          setConfirmationModalOpen(true);
+                        }}
+                        className="text-red-600 hover:text-red-800 font-medium transition"
+                      >
                         <BiTrash size={22} />
                       </button>
                     </td>
@@ -160,6 +174,13 @@ export default function BrandsPage() {
 
       {/* Add brand modal */}
       <AddBrandsPage isModalOpen={modalOpen} onClose={handleModalClose} />
+
+      {/* Brand delete confirmation modal */}
+      <ConfirmationDialog
+        isModalOpen={confirmationModalOpen}
+        onClose={handleModalClose}
+        brandId={selectedBrandId.current}
+      />
     </div>
   );
 }
