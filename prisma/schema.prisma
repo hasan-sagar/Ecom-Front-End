@@ -11,7 +11,7 @@ datasource db {
 model brand {
   id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   created_at      DateTime  @default(now()) @db.Timestamp(6)
-  brand_name      String?   @unique @db.VarChar
+  brand_name      String    @unique @db.VarChar
   brand_image_url String?   @db.VarChar
   user_id         String    @db.Uuid
   user            user      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
