@@ -17,6 +17,19 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
+  //role
+  const role = token.role;
+  if (role !== "admin") {
+    return NextResponse.json(
+      {
+        message: "Forbidden Resource",
+      },
+      {
+        status: 403,
+      }
+    );
+  }
+
   const adminId = token.id;
 
   if (!adminId) {

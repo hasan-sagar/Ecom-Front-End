@@ -20,6 +20,19 @@ export async function DELETE(
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
+  //role
+  const role = token.role;
+  if (role !== "admin") {
+    return NextResponse.json(
+      {
+        message: "Forbidden Resource",
+      },
+      {
+        status: 403,
+      }
+    );
+  }
+
   try {
     // Check if the brand exists and delete it
     const deletionResult = await deleteBrandById(id);
@@ -74,6 +87,19 @@ export async function PUT(
   // Validate token
   if (!token) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  //role
+  const role = token.role;
+  if (role !== "admin") {
+    return NextResponse.json(
+      {
+        message: "Forbidden Resource",
+      },
+      {
+        status: 403,
+      }
+    );
   }
 
   //body data
