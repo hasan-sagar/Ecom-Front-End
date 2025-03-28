@@ -1,5 +1,6 @@
 const { faker } = require("@faker-js/faker");
 const { PrismaClient } = require("@prisma/client");
+const CategoriesSeedData = require("../public/demo-data/category-seed-data");
 
 const prisma = new PrismaClient();
 
@@ -20,6 +21,19 @@ async function main() {
   });
 
   console.log("Seeding brands completed!");
+
+  console.log("Seeding Categories.....");
+  //Create categories seed
+  for (const categories of CategoriesSeedData) {
+    await prisma.category.createMany({
+      data: {
+        category_name: categories.name,
+        category_image_url: categories.image,
+        user_id: "efe98ada-0863-4609-b0c1-9cde300e64af",
+      },
+    });
+  }
+  console.log("Seeding categories completed");
 }
 
 main()

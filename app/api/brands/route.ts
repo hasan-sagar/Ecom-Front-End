@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
 
   try {
     // Fetch total brands count
-    const totalBrandsFetch: any =
+    const totalBrandsFetch: [{ count: any }] =
       await prisma.$queryRaw`SELECT COUNT(*) AS count 
       FROM brand 
       WHERE brand.user_id=${adminId}::uuid 
