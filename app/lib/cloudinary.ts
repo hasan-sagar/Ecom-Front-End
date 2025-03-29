@@ -7,10 +7,10 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 });
 
-export async function uploadImage(file: string) {
+export async function uploadImage(file: string, folder: string) {
   try {
     const result = await cloudinary.uploader.upload(file, {
-      folder: "exute_shop/brands",
+      folder: `exute_shop/${folder}`,
       transformation: { width: 300, height: 300, crop: "fill" },
       resource_type: "image",
     });

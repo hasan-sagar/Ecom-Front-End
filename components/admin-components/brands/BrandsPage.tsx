@@ -144,7 +144,7 @@ export default function BrandsPage() {
               </thead>
               <tbody>
                 {data.data.map((brandData: Brands) => (
-                  <tr key={brandData.id} className="border-t bg-gray-50">
+                  <tr key={brandData.id} className="border-t ">
                     <td className="px-6 py-4 text-sm text-textdark4">
                       {brandData.brand_name}
                     </td>
