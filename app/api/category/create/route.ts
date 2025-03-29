@@ -3,16 +3,16 @@ import prisma from "@/app/lib/prisma";
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
-interface Brands {
+interface Category {
   id: string;
-  brand_name: string;
+  category_name: string;
 }
 
 export async function POST(req: NextRequest) {
-  //extract token request
+  // Extract token from the request
   const token = await getToken({ req });
 
-  //validate token
+  // Validate token
   if (!token) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
@@ -41,31 +41,40 @@ export async function POST(req: NextRequest) {
 
   //parse body data
   const bodyData = await req.json();
-  const { brand_name, brand_image_url } = bodyData;
+  const { category_name } = bodyData;
+  const { category_image_url } = bodyData;
 
-  //brand_name required
-  if (!brand_name) {
+  //category name and url required
+  if (!category_name) {
     return NextResponse.json(
-      { message: "Brand name is required" },
+      { message: "Category name is required" },
       { status: 400 }
     );
   }
-  if (!brand_image_url) {
+  if (!category_image_url) {
     return NextResponse.json(
-      { message: "Brand image is required" },
+      { message: "Category image is required" },
       { status: 400 }
     );
   }
 
-  //check brand exist or not
-  const checkBrand: Brands[] = await checkBrandExist(brand_name);
-  if (checkBrand.length > 0) {
-    return NextResponse.json({ message: "Brand name exist" }, { status: 400 });
+  //check category exist or not
+  const checkCategory: Category[] = await checkCategoryExist(category_name);
+  if (checkCategory.length > 0) {
+    return NextResponse.json(
+      {
+        message: "Category name exist",
+      },
+      {
+        status: 400,
+      }
+    );
   }
+
   let imageUrl: string = "";
-  if (brand_image_url) {
+  if (category_image_url) {
     try {
-      imageUrl = await uploadImage(brand_image_url, "brands");
+      imageUrl = await uploadImage(category_image_url, "categories");
     } catch (error) {
       return NextResponse.json(
         {
@@ -80,13 +89,13 @@ export async function POST(req: NextRequest) {
 
   try {
     await prisma.$queryRaw`
-    INSERT INTO brand (brand_name,brand_image_url,user_id)
-    values(${brand_name}, ${imageUrl} , ${adminId}::uuid)
-  `;
+      INSERT INTO category(category_name , category_image_url, user_id)
+      VALUES(${category_name} , ${imageUrl} , ${adminId}::uuid)
+    `;
 
     return NextResponse.json(
       {
-        message: "Brand created success",
+        message: "Category created success",
       },
       {
         status: 201,
@@ -95,21 +104,27 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     return NextResponse.json(
       {
-        message: "Error creating brand",
+        message: "Error creating category",
       },
       {
         status: 500,
       }
     );
   }
+  return NextResponse.json({
+    message: "Hello create",
+    category_name,
+    category_image_url,
+  });
 }
 
-//helper function to check if brand exist
-async function checkBrandExist(brand_name: string): Promise<Brands[]> {
-  const formatBrandName = brand_name.toLowerCase();
+//helperr function to check if category exist
+async function checkCategoryExist(category_name: string): Promise<Category[]> {
+  const formatCategoryName = category_name.toLowerCase();
+
   return await prisma.$queryRaw`
-  SELECT id,brand_name 
-  FROM brand
-  WHERE LOWER(brand.brand_name) = ${formatBrandName}
+    SELECT id,category_name
+    FROM category
+    WHERE LOWER(category.category_name)=${formatCategoryName}
   `;
 }
