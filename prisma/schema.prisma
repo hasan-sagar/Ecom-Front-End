@@ -74,4 +74,20 @@ model user {
   brand        brand[]
   category     category[]
   product      product[]
+  supplier     supplier[]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model supplier {
+  id                    String   @id(map: "suppliers_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  supplier_name         String   @db.VarChar
+  supplier_email        String   @unique(map: "suppliers_supplier_email_key") @db.VarChar
+  supplier_phone_number String   @unique(map: "suppliers_supplier_phone_number_key") @db.VarChar
+  supplier_country      String?  @db.VarChar
+  supplier_city         String   @db.VarChar
+  supplier_company_name String   @db.VarChar
+  supplier_address      String   @db.VarChar
+  created_at            DateTime @default(now()) @db.Timestamp(6)
+  user_id               String   @db.Uuid
+  user                  user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "suppliers_user_id_fkey")
 }

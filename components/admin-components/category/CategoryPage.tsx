@@ -123,7 +123,7 @@ export default function CategoryPage() {
           <div className="overflow-x-auto">
             <table className="w-full border-collapse rounded-md overflow-hidden">
               <thead>
-                <tr className="bg-gray-100 text-textdark2">
+                <tr className="bg-primary text-white">
                   {/* <th className="px-6 py-3 text-left text-base font-semibold">
                     Name
                   </th> */}
@@ -144,16 +144,19 @@ export default function CategoryPage() {
               </thead>
               <tbody>
                 {data.data.map((categoryData: Category) => (
-                  <tr key={categoryData.id} className="border-t ">
+                  <tr
+                    key={categoryData.id}
+                    className="border-t hover:bg-gray-100"
+                  >
                     <td className="px-6 py-4 text-sm text-textdark4">
                       {categoryData.category_name}
                     </td>
-                    <td className="px-6 py-4 text-sm text-textdark4 line-clamp-1 hover:text-primary">
+                    <td className="px-6 py-4 text-sm text-primary font-medium line-clamp-1 hover:text-primary">
                       <Link
                         target="_blank"
                         href={categoryData.category_image_url}
                       >
-                        {categoryData.category_image_url}
+                        View Image
                       </Link>
                     </td>
                     {/* action buttons */}
