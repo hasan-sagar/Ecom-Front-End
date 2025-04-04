@@ -3,7 +3,7 @@ import Header from "@/components/ui/admin-panel/Header";
 import Sidebar from "@/components/ui/admin-panel/Sidebar";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 export default function DashboardLayout({
   children,

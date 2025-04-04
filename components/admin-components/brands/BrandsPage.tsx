@@ -123,7 +123,7 @@ export default function BrandsPage() {
           <div className="overflow-x-auto">
             <table className="w-full border-collapse rounded-md overflow-hidden">
               <thead>
-                <tr className="bg-gray-100 text-textdark2">
+                <tr className="bg-primary text-white">
                   {/* <th className="px-6 py-3 text-left text-base font-semibold">
                     Name
                   </th> */}
@@ -148,9 +148,9 @@ export default function BrandsPage() {
                     <td className="px-6 py-4 text-sm text-textdark4">
                       {brandData.brand_name}
                     </td>
-                    <td className="px-6 py-4 text-sm text-textdark4 line-clamp-1 hover:text-primary">
+                    <td className="px-6 py-4 text-sm text-primary font-medium line-clamp-1 hover:text-primary">
                       <Link target="_blank" href={brandData.brand_image_url}>
-                        {brandData.brand_image_url}
+                        View Image
                       </Link>
                     </td>
                     {/* action buttons */}

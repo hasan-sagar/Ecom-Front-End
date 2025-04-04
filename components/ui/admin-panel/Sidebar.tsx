@@ -27,7 +27,6 @@ const menuItems = [
     subItems: [
       { label: "Customers", href: "/admin/customers" },
       { label: "Suppliers", href: "/admin/suppliers" },
-      { label: "Add Supplier", href: "/admin/suppliers/add" },
     ],
   },
 ];
