@@ -8,6 +8,7 @@ export default function PaginationComponent({
   data,
   onPageChange,
   currentPage,
+  totalResult,
 }: any) {
   // State for page size
   const [pageSize, setPageSize] = useState(data?.pagination.pageSize || 10);
@@ -16,9 +17,7 @@ export default function PaginationComponent({
   const handlePageSizeChange = (e: any) => {
     const selectedValue = e.target.value;
     const newPageSize =
-      selectedValue === "all"
-        ? data?.pagination.totalBrands
-        : parseInt(selectedValue, 10);
+      selectedValue === "all" ? totalResult : parseInt(selectedValue, 10);
     setPageSize(newPageSize);
     onPageChange("pageSize", newPageSize);
   };
@@ -31,7 +30,7 @@ export default function PaginationComponent({
         </span>
         <select
           id="recordsPerPage"
-          value={pageSize === data?.pagination.totalBrands ? "all" : pageSize}
+          value={pageSize === totalResult ? "all" : pageSize}
           onChange={handlePageSizeChange}
           className="rounded px-3 py-2 text-base bg-white text-textdark3 custom-font"
         >
@@ -42,8 +41,7 @@ export default function PaginationComponent({
           <option value="all">All</option>
         </select>
         <span className="text-base font-medium text-textdark3">
-          {pageSize === data?.pagination.totalBrands ? "All" : pageSize} of{" "}
-          {data?.pagination.totalBrands}
+          {pageSize === totalResult ? "All" : pageSize} of {totalResult}
         </span>
       </div>
 
