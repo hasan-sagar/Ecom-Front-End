@@ -31,6 +31,7 @@ async function main() {
         category_image_url: categories.image,
         user_id: "efe98ada-0863-4609-b0c1-9cde300e64af",
       },
+      skipDuplicates: true,
     });
   }
   console.log("Seeding categories completed");
