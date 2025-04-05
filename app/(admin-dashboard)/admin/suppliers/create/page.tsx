@@ -2,5 +2,10 @@ import CreateSuppliersPage from "@/components/admin-components/suppliers/CreateS
 import React from "react";
 
 export default function page() {
-  return <CreateSuppliersPage />;
+  return (
+    <>
+      <title>Create Supplier</title>
+      <CreateSuppliersPage />;
+    </>
+  );
 }
