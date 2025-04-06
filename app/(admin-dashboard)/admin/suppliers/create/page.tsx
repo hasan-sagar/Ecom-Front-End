@@ -5,7 +5,7 @@ export default function page() {
   return (
     <>
       <title>Create Supplier</title>
-      <CreateSuppliersPage />;
+      <CreateSuppliersPage />
     </>
   );
 }
