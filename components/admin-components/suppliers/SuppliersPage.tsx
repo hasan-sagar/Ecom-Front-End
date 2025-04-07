@@ -7,6 +7,7 @@ import { BiTrash } from "react-icons/bi";
 import { FaSpinner } from "react-icons/fa";
 import { PiPencilSimpleLineDuotone } from "react-icons/pi";
 import PaginationComponent from "../pagination/Pagination";
+import SupplierConfirmationDialog from "./ConfirmationDialog";
 
 interface Suppliers {
   id: string;
@@ -24,10 +25,25 @@ export default function SuppliersPage() {
   const [pageSize, setPageSize] = useState<number>(10);
   const [query, setQuery] = useState<string>("");
 
+  //get supplier id
+  const [selectedSupplierId, setSelectedSupplierId] = useState<string>("");
+
+  //supplier confirmation modal state
+  const [confirmationModalOpen, setConfirmationModalOpen] =
+    useState<boolean>(false);
+
+  //modal close function
+  const handleModalClose = () => {
+    //close modal for delete
+    confirmationModalOpen && setConfirmationModalOpen(false);
+  };
+
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ["suppliers", currentPage, pageSize, query],
     queryFn: () => getAllSuppliers(currentPage, pageSize, query),
   });
+
+  if (error) "Error fetching suppliers";
 
   //table search
   const querySearch = (query: string) => {
@@ -97,7 +113,6 @@ export default function SuppliersPage() {
           + Add Supplier
         </button>
       </header>
-
       {/* table section */}
       <main className="bg-white p-6 rounded-md shadow-sm">
         <h2 className="text-xl font-semibold text-textdark2 mb-4">Suppliers</h2>
@@ -155,7 +170,13 @@ export default function SuppliersPage() {
                         <PiPencilSimpleLineDuotone size={22} />
                       </button>
                       {/* delete button */}
-                      <button className="text-red-600 hover:text-red-800 font-medium transition">
+                      <button
+                        onClick={() => {
+                          setSelectedSupplierId(supplierData.id);
+                          setConfirmationModalOpen(true);
+                        }}
+                        className="text-red-600 hover:text-red-800 font-medium transition"
+                      >
                         <BiTrash size={22} />
                       </button>
                     </td>
@@ -166,13 +187,18 @@ export default function SuppliersPage() {
           </div>
         )}
       </main>
-
       {/* pagination */}
       <PaginationComponent
         data={data}
         onPageChange={onPageChange}
         currentPage={currentPage}
         totalResult={data?.pagination.totalSuppliers}
+      />
+      {/* supplier delete confirmation model */}
+      <SupplierConfirmationDialog
+        isModalOpen={confirmationModalOpen}
+        onClose={handleModalClose}
+        supplierId={selectedSupplierId}
       />
     </div>
   );
