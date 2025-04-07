@@ -1,6 +1,11 @@
 "use client";
+import { createSupplier } from "@/services/supplier-api";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import { FaSpinner } from "react-icons/fa";
 
 export default function CreateSuppliersPage() {
   const router = useRouter();
@@ -25,10 +30,36 @@ export default function CreateSuppliersPage() {
     }));
   };
 
+  //create supplier api
+  const createSupplierMutation = useMutation({
+    mutationFn: async () => {
+      return await createSupplier(
+        formData.name,
+        formData.email,
+        formData.phone,
+        formData.country,
+        formData.city,
+        formData.company,
+        formData.address
+      );
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+      return router.push("/admin/suppliers");
+    },
+    onError: (error: any) => {
+      if (axios.isAxiosError(error)) {
+        toast.error(`${error.response?.data.message}`);
+      } else {
+        toast.error(`${error.message}`);
+      }
+    },
+  });
+
   // Handle form submission
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log("Form Data:", formData);
+    createSupplierMutation.mutate();
   };
 
   return (
@@ -188,12 +219,23 @@ export default function CreateSuppliersPage() {
             >
               Cancel
             </button>
-            <button
-              type="submit"
-              className="w-full sm:w-auto px-7 py-3 text-sm font-medium text-white bg-primary border rounded-md transition-colors"
-            >
-              Save
-            </button>
+            {createSupplierMutation.isPending ? (
+              <button
+                type="button"
+                className="w-full sm:w-auto px-7 py-3 bg-transparent"
+              >
+                <FaSpinner size={20} className="animate-spin" />
+              </button>
+            ) : (
+              <>
+                <button
+                  type="submit"
+                  className="w-full sm:w-auto px-7 py-3 text-sm font-medium text-white bg-primary border rounded-md transition-colors"
+                >
+                  Save
+                </button>
+              </>
+            )}
           </div>
         </form>
       </div>
