@@ -15,33 +15,25 @@ interface Suppliers {
 }
 
 export async function POST(req: NextRequest) {
-  // Extract token from the request
   const token = await getToken({ req });
 
-  // Validate token
-  if (!token) {
+  if (!token || !token.id) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
   const adminId = token.id;
 
-  if (!adminId) {
-    return NextResponse.json(
-      { message: "Unauthorized: Missing user ID in token" },
-      { status: 401 }
-    );
-  }
-
-  // Parse body data
   const bodyData = await req.json();
 
-  const { supplier_name } = bodyData;
-  const { supplier_email } = bodyData;
-  const { supplier_phone_number } = bodyData;
-  const { supplier_country } = bodyData;
-  const { supplier_city } = bodyData;
-  const { supplier_company_name } = bodyData;
-  const { supplier_address } = bodyData;
+  const {
+    supplier_name,
+    supplier_email,
+    supplier_phone_number,
+    supplier_country,
+    supplier_city,
+    supplier_company_name,
+    supplier_address,
+  } = bodyData;
 
   const requiredFields = {
     supplier_name: "Supplier name",
@@ -52,50 +44,65 @@ export async function POST(req: NextRequest) {
     supplier_address: "Supplier address",
   };
 
-  for (const [field, message] of Object.entries(requiredFields)) {
+  for (const [field, label] of Object.entries(requiredFields)) {
     if (!bodyData[field]) {
       return NextResponse.json(
-        { message: `${message} is required` },
+        { message: `${label} is required` },
         { status: 400 }
       );
     }
   }
 
-  // Check if supplier exists
-  const checkSupplier: Suppliers[] = await checkSupplierExist(
-    supplier_email,
-    supplier_phone_number
+  // Check for existing supplier
+  const existingSupplier = await checkSupplierExist(
+    supplier_phone_number,
+    supplier_email
   );
 
-  if (checkSupplier.length > 0) {
+  if (existingSupplier.length > 0) {
     return NextResponse.json(
-      {
-        message: "Supplier email or phone number already exists",
-      },
-      {
-        status: 4000,
-      }
+      { message: "Supplier already exists" },
+      { status: 400 }
     );
   }
 
   try {
     await prisma.$queryRaw`
-      INSERT INTO supplier (supplier_name, supplier_email, supplier_phone_number, supplier_country, supplier_city, supplier_company_name, supplier_address,user_id)
-      VALUES (${supplier_name}, ${supplier_email}, ${supplier_phone_number}, ${supplier_country}, ${supplier_city}, ${supplier_company_name}, ${supplier_address} , ${adminId}::uuid)
+      INSERT INTO supplier (
+        supplier_name,
+        supplier_email,
+        supplier_phone_number,
+        supplier_country,
+        supplier_city,
+        supplier_company_name,
+        supplier_address,
+        user_id
+      )
+      VALUES (
+        ${supplier_name},
+        ${supplier_email},
+        ${supplier_phone_number},
+        ${supplier_country},
+        ${supplier_city},
+        ${supplier_company_name},
+        ${supplier_address},
+        ${adminId}::uuid
+      )
     `;
-  } catch (error) {
+
     return NextResponse.json(
-      {
-        message: "Error creating supplier",
-      },
-      {
-        status: 500,
-      }
+      { message: "Supplier created successfully" },
+      { status: 201 }
+    );
+  } catch (error) {
+    console.error("Error creating supplier:", error);
+    return NextResponse.json(
+      { message: "Error creating supplier" },
+      { status: 500 }
     );
   }
 }
 
-//helper function to check if supplier exist
 async function checkSupplierExist(
   supplier_phone_number: string,
   supplier_email: string
