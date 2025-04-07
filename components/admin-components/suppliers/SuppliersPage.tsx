@@ -8,7 +8,7 @@ export default function SuppliersPage() {
       {/* Header */}
       <header className="flex flex-col sm:flex-row justify-between items-center gap-4 pb-6">
         <input
-          type="text"
+          type="search"
           className="px-4 py-2 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 max-w-sm rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary transition duration-300"
           placeholder="Search"
         />
