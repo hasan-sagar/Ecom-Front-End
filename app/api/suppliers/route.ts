@@ -11,7 +11,6 @@ interface Suppliers {
   supplier_city: string;
   supplier_company_name: string;
   supplier_address: string;
-  user_id: string;
 }
 
 export async function GET(req: NextRequest) {

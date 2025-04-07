@@ -22,3 +22,13 @@ export const createSupplier = async (
 
   return response.data;
 };
+
+//get all suppliers
+export const getAllSuppliers = async (
+  page: number,
+  pageSize: number,
+  query: string
+) => {
+  const response = await axiosInstance.get(`/suppliers?page=${page}&pageSize=${pageSize}&query=${query}`);
+  return response.data;
+};
