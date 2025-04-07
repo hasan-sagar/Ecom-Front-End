@@ -29,6 +29,14 @@ export const getAllSuppliers = async (
   pageSize: number,
   query: string
 ) => {
-  const response = await axiosInstance.get(`/suppliers?page=${page}&pageSize=${pageSize}&query=${query}`);
+  const response = await axiosInstance.get(
+    `/suppliers?page=${page}&pageSize=${pageSize}&query=${query}`
+  );
+  return response.data;
+};
+
+//delete supplier
+export const deleteSupplier = async (supplierId: string) => {
+  const response = await axiosInstance.delete(`/suppliers/${supplierId}`);
   return response.data;
 };
