@@ -40,3 +40,9 @@ export const deleteSupplier = async (supplierId: string) => {
   const response = await axiosInstance.delete(`/suppliers/${supplierId}`);
   return response.data;
 };
+
+//get supplier
+export const getSupplier = async (supplierId: string) => {
+  const response = await axiosInstance.get(`/suppliers/${supplierId}`);
+  return response.data;
+};
