@@ -1,11 +1,14 @@
 "use client";
-import { getSupplier } from "@/services/supplier-api";
-import { useQuery } from "@tanstack/react-query";
+import { getSupplier, updateSupplier } from "@/services/supplier-api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import axios from "axios";
 import { useParams, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { FaSpinner } from "react-icons/fa";
 
 export default function EditSuppliersPage() {
+  const queryClient = useQueryClient();
   const router = useRouter();
   const params = useParams<{ id: string }>();
 
@@ -44,6 +47,37 @@ export default function EditSuppliersPage() {
     }
   }, [data]);
 
+  //update supplier api
+  const updateSupplierMutation = useMutation({
+    mutationFn: async () => {
+      return await updateSupplier(supplierId, {
+        supplier_name: formData.name,
+        supplier_email: formData.email,
+        supplier_phone_number: formData.phone,
+        supplier_country: formData.country,
+        supplier_city: formData.city,
+        supplier_company_name: formData.company,
+        supplier_address: formData.address,
+      });
+    },
+    onSuccess: (data) => {
+      toast.success(data.message);
+      return router.push("/admin/suppliers");
+    },
+    onError: (error: any) => {
+      if (axios.isAxiosError(error)) {
+        toast.error(`${error.response?.data.message}`);
+      } else {
+        toast.error(`${error.message}`);
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["suppliers"],
+      });
+    },
+  });
+
   // Handle input changes
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -56,6 +90,7 @@ export default function EditSuppliersPage() {
   // Handle form submission
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    updateSupplierMutation.mutate();
   };
 
   return (
@@ -222,12 +257,18 @@ export default function EditSuppliersPage() {
                   Cancel
                 </button>
 
-                <button
-                  type="submit"
-                  className="w-full sm:w-auto px-7 py-3 text-sm font-medium text-white bg-primary border rounded-md transition-colors"
-                >
-                  Update
-                </button>
+                {updateSupplierMutation.isPending ? (
+                  <button className="w-full sm:w-auto px-7 py-3 text-sm font-medium  bg-transparent border-none rounded-md transition-colors">
+                    <FaSpinner size={20} className="animate-spin" />
+                  </button>
+                ) : (
+                  <button
+                    type="submit"
+                    className="w-full sm:w-auto px-7 py-3 text-sm font-medium text-white bg-primary border rounded-md transition-colors"
+                  >
+                    Update
+                  </button>
+                )}
               </div>
             </form>
           </div>

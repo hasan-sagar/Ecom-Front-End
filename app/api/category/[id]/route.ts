@@ -94,22 +94,22 @@ export async function PUT(
   const token = await getToken({ req });
 
   // Validate token
-  //   if (!token) {
-  //     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  //   }
+  if (!token) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
 
   //role
-  //   const role = token.role;
-  //   if (role !== "admin") {
-  //     return NextResponse.json(
-  //       {
-  //         message: "Forbidden Resource",
-  //       },
-  //       {
-  //         status: 403,
-  //       }
-  //     );
-  //   }
+  const role = token.role;
+  if (role !== "admin") {
+    return NextResponse.json(
+      {
+        message: "Forbidden Resource",
+      },
+      {
+        status: 403,
+      }
+    );
+  }
 
   //body data
   const bodyData = await req.json();
@@ -150,7 +150,7 @@ async function updateCategory(categoryId: string, categoryName: string) {
   if (existingCategory.length < 1) {
     return NextResponse.json(
       {
-        message: "No category found to delete",
+        message: "No category found to update",
       },
       {
         status: 404,
