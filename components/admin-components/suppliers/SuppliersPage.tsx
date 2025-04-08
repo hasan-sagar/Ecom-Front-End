@@ -8,6 +8,7 @@ import { FaSpinner } from "react-icons/fa";
 import { PiPencilSimpleLineDuotone } from "react-icons/pi";
 import PaginationComponent from "../pagination/Pagination";
 import SupplierConfirmationDialog from "./ConfirmationDialog";
+import Link from "next/link";
 
 interface Suppliers {
   id: string;
@@ -166,9 +167,11 @@ export default function SuppliersPage() {
                     {/* action buttons */}
                     <td className="px-6 py-4 text-right">
                       {/* edit button */}
-                      <button className="text-primary font-medium transition mr-4">
-                        <PiPencilSimpleLineDuotone size={22} />
-                      </button>
+                      <Link href={`/admin/suppliers/edit/${supplierData.id}`}>
+                        <button className="text-primary font-medium transition mr-4">
+                          <PiPencilSimpleLineDuotone size={22} />
+                        </button>
+                      </Link>
                       {/* delete button */}
                       <button
                         onClick={() => {
