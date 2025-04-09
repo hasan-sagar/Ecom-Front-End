@@ -1,6 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["typedSql"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -42,8 +41,14 @@ model product {
   product_slug        String          @unique @db.VarChar
   is_featured         Boolean         @default(false)
   is_new_arrival      Boolean         @default(false)
+  status              ProductStatus   @default(ACTIVE)
+  shipping_cost       Decimal         @db.Decimal
+  discount_percentage Decimal?        @db.Decimal
+  sale_price          Decimal         @db.Decimal
+  supplier_id         String          @db.Uuid
   brand               brand           @relation(fields: [brand_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   category            category        @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  supplier            supplier        @relation(fields: [supplier_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   user                user            @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   product_image       product_image[]
   review              review[]
@@ -54,16 +59,16 @@ model product_image {
   created_at DateTime @default(now()) @db.Timestamp(6)
   image_url  String?  @db.VarChar
   product_id String?  @db.Uuid
-  product    product? @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  product    product? @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model review {
-  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  created_at      DateTime @default(now()) @db.Timestamp(6)
-  product_star    Int?     @db.SmallInt
-  product_comment String?
-  product_id      String?  @db.Uuid
-  product         product? @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  rating     Int?     @db.SmallInt
+  comment    String?
+  product_id String?  @db.Uuid
+  product    product? @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model user {
@@ -83,15 +88,22 @@ model user {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model supplier {
-  id                    String   @id(map: "suppliers_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  supplier_name         String   @db.VarChar
-  supplier_email        String   @unique(map: "suppliers_supplier_email_key") @db.VarChar
-  supplier_phone_number String   @unique(map: "suppliers_supplier_phone_number_key") @db.VarChar
-  supplier_country      String?  @db.VarChar
-  supplier_city         String   @db.VarChar
-  supplier_company_name String   @db.VarChar
-  supplier_address      String   @db.VarChar
-  created_at            DateTime @default(now()) @db.Timestamp(6)
-  user_id               String   @db.Uuid
-  user                  user     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "suppliers_user_id_fkey")
+  id                    String    @id(map: "suppliers_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  supplier_name         String    @db.VarChar
+  supplier_email        String    @unique(map: "suppliers_supplier_email_key") @db.VarChar
+  supplier_phone_number String    @unique(map: "suppliers_supplier_phone_number_key") @db.VarChar
+  supplier_country      String?   @db.VarChar
+  supplier_city         String    @db.VarChar
+  supplier_company_name String    @db.VarChar
+  supplier_address      String    @db.VarChar
+  created_at            DateTime  @default(now()) @db.Timestamp(6)
+  user_id               String    @db.Uuid
+  product               product[]
+  user                  user      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "suppliers_user_id_fkey")
+}
+
+enum ProductStatus {
+  ACTIVE
+  INACTIVE
+  OUT_OF_STOCK
 }
