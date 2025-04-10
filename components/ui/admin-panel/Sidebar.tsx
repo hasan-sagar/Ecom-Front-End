@@ -15,7 +15,7 @@ const menuItems = [
     href: "#",
     subItems: [
       { label: "Products", href: "/admin/products" },
-      { label: "Add Product", href: "/admin/products/add" },
+      { label: "Add Product", href: "/admin/products/create" },
       { label: "Brands", href: "/admin/brands" },
       { label: "Category", href: "/admin/category" },
     ],
