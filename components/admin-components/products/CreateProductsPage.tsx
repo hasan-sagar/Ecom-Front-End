@@ -2,6 +2,46 @@
 
 import { useState, ChangeEvent, FormEvent } from "react";
 import { FaTrash } from "react-icons/fa";
+import dynamic from "next/dynamic";
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
+import "react-quill-new/dist/quill.snow.css";
+
+const modules = {
+  toolbar: [
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    ["bold", "italic", "underline", "strike"],
+    [{ list: "ordered" }, { list: "bullet" }],
+    [{ script: "sub" }, { script: "super" }],
+    [{ indent: "-1" }, { indent: "+1" }],
+    [{ direction: "rtl" }],
+    [{ size: ["small", false, "large", "huge"] }],
+    [{ color: [] }, { background: [] }],
+    [{ font: [] }],
+    [{ align: [] }],
+    ["link", "image", "video"],
+    ["clean"],
+  ],
+};
+
+const formats = [
+  "header",
+  "font",
+  "size",
+  "bold",
+  "italic",
+  "underline",
+  "strike",
+  "script",
+  "color",
+  "background",
+  "list",
+  "indent",
+  "direction",
+  "align",
+  "link",
+  "image",
+  "video",
+];
 
 export default function ModernProductForm() {
   const [featured, setFeatured] = useState(false);
@@ -76,7 +116,6 @@ export default function ModernProductForm() {
         newArrival,
         images: base64Images,
       };
-
       console.log("Submitting Product:", fullData);
     } catch (error) {
       console.error("Image conversion failed", error);
@@ -109,17 +148,15 @@ export default function ModernProductForm() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-1">
-              Description
-            </label>
-            <textarea
-              name="description"
-              rows={5}
+            <ReactQuill
+              theme="snow"
               value={formData.description}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-primary focus:border-primary"
-              placeholder="Write product description..."
-            ></textarea>
+              onChange={(content) =>
+                setFormData((prev) => ({ ...prev, description: content }))
+              }
+              modules={modules}
+              formats={formats}
+            />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -242,7 +279,7 @@ export default function ModernProductForm() {
             >
               <option value="ACTIVE">Active</option>
               <option value="INACTIVE">Inactive</option>
-              <option value="ARCHIVED">Archived</option>
+              <option value="OUT_OF_STOCK">Out Of Stock</option>
             </select>
           </div>
         </div>
