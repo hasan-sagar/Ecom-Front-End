@@ -63,11 +63,11 @@ export default function CreateSuppliersPage() {
   };
 
   return (
-    <div className="max-w-full mx-auto p-4 bg-white rounded-lg">
-      <div className="p-4 rounded-lg">
-        <h4 className="text-2xl font-semibold text-textdark2 mb-6">
-          Create Supplier
-        </h4>
+    <div className="max-w-full mx-auto bg-white rounded-lg">
+      <h4 className="text-base font-semibold bg-primary p-4 text-white rounded-t-lg">
+        Create Supplier
+      </h4>
+      <div className="p-8 rounded-lg">
         <form onSubmit={handleSubmit}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
             {/* Supplier Name */}

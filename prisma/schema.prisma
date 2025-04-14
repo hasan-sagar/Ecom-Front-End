@@ -43,7 +43,7 @@ model product {
   is_new_arrival      Boolean         @default(false)
   status              ProductStatus   @default(ACTIVE)
   shipping_cost       Decimal         @db.Decimal
-  discount_percentage Decimal?        @db.Decimal
+  discount_percentage Decimal?        @default(0) @db.Decimal
   sale_price          Decimal         @db.Decimal
   supplier_id         String          @db.Uuid
   brand               brand           @relation(fields: [brand_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
