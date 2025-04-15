@@ -7,8 +7,29 @@ import * as z from "zod";
 import dynamic from "next/dynamic";
 import { FaTrash } from "react-icons/fa";
 import "react-quill-new/dist/quill.snow.css";
+import { useMutation } from "@tanstack/react-query";
+import { createProduct } from "@/services/product-api";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
+
+//product body data
+interface ProductData {
+  product_name: string;
+  product_description: string;
+  category_id: string;
+  brand_id: string;
+  supplier_id: string;
+  product_slug: string;
+  image_url: string[];
+  stock: number;
+  price: number;
+  sale_price: number;
+  shipping_cost: number;
+  discount_percentage: number;
+  status: string;
+  is_featured: boolean;
+  is_new_arrival: boolean;
+}
 
 const modules = {
   toolbar: [
@@ -96,6 +117,16 @@ export default function ModernProductForm() {
     },
   });
 
+  //create product api
+  const createProductMutation = useMutation({
+    mutationFn: async (productData: ProductData) => {
+      return await createProduct(productData);
+    },
+    onError: (error) => {
+      console.error("Product creation failed:", error);
+    },
+  });
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) {
@@ -137,6 +168,26 @@ export default function ModernProductForm() {
         newArrival,
         images: base64Images,
       };
+
+      const productData: ProductData = {
+        product_name: data.name,
+        product_description: data.description,
+        category_id: data.category,
+        brand_id: data.brand,
+        supplier_id: data.supplier,
+        product_slug: data.slug,
+        image_url: base64Images,
+        stock: data.stock,
+        price: data.price,
+        sale_price: data.salePrice,
+        shipping_cost: data.shippingCost,
+        discount_percentage: data.discount || 0,
+        status: data.status,
+        is_featured: featured,
+        is_new_arrival: newArrival,
+      };
+
+      createProductMutation.mutate(productData);
 
       console.log("Submitting Product:", fullData);
     } catch (error) {

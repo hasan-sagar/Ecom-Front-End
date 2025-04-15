@@ -82,7 +82,7 @@ export async function POST(req: NextRequest) {
   if (existingSupplier.length > 0) {
     return NextResponse.json(
       { message: "Supplier already exists" },
-      { status: 400 }
+      { status: 409 }
     );
   }
 
