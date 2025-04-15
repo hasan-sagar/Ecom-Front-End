@@ -1,10 +1,14 @@
 "use client";
 
-import { useState, ChangeEvent, FormEvent } from "react";
-import { FaTrash } from "react-icons/fa";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import * as z from "zod";
 import dynamic from "next/dynamic";
-const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
+import { FaTrash } from "react-icons/fa";
 import "react-quill-new/dist/quill.snow.css";
+
+const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
 const modules = {
   toolbar: [
@@ -43,67 +47,84 @@ const formats = [
   "video",
 ];
 
+// Zod schema
+const schema = z.object({
+  name: z.string().min(1, "Product name is required"),
+  description: z.string().min(1, "Description is required"),
+  category: z.string().min(1, "Category ID is required"),
+  brand: z.string().min(1, "Brand ID is required"),
+  supplier: z.string().min(1, "Supplier ID is required"),
+  slug: z.string().min(1, "Slug is required"),
+  stock: z.coerce.number().min(1, "Stock is required"),
+  price: z.coerce.number().min(0.01, "Price is required"),
+  salePrice: z.coerce.number().min(0.01, "Sale price is required"),
+  shippingCost: z.coerce.number().min(0.01, "Shipping cost is required"),
+  discount: z.coerce.number().optional(),
+  status: z.enum(["ACTIVE", "INACTIVE", "OUT_OF_STOCK"]),
+});
+
+type FormData = z.infer<typeof schema>;
+
 export default function ModernProductForm() {
   const [featured, setFeatured] = useState(false);
   const [newArrival, setNewArrival] = useState(false);
-
-  // forms data
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    categoryId: "",
-    brandId: "",
-    supplierId: "",
-    slug: "",
-    stock: "",
-    price: "",
-    salePrice: "",
-    shippingCost: "",
-    discount: "",
-    status: "ACTIVE",
-  });
-
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
   const [imagePreviews, setImagePreviews] = useState<string[]>([]);
 
-  // Handle input change
-  const handleInputChange = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({ ...prev, [name]: value }));
-  };
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useForm<FormData>({
+    resolver: zodResolver(schema),
+    mode: "onChange",
+    defaultValues: {
+      name: "",
+      description: "",
+      category: "",
+      brand: "",
+      supplier: "",
+      slug: "",
+      stock: undefined,
+      price: undefined,
+      salePrice: undefined,
+      shippingCost: undefined,
+      discount: 0,
+      status: "ACTIVE",
+    },
+  });
 
-  // handle image input
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
-    setSelectedImages(files);
+    if (files.length === 0) {
+      alert("Please select at least one image.");
+      return;
+    }
 
+    setSelectedImages(files);
     const previews = files.map((file) => URL.createObjectURL(file));
     setImagePreviews(previews);
   };
 
-  // Delete image preview
   const deleteImage = (index: number) => {
-    const updatedFiles = selectedImages.filter((_, i) => i !== index);
-    const updatedPreviews = imagePreviews.filter((_, i) => i !== index);
-    setSelectedImages(updatedFiles);
-    setImagePreviews(updatedPreviews);
+    setSelectedImages((prev) => prev.filter((_, i) => i !== index));
+    setImagePreviews((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // Image conversion to base64
   const convertImageToBase64 = (file: File) => {
-    return new Promise((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
       const reader = new FileReader();
       reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (err) => reject(err);
     });
   };
 
-  // Handle form submission
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const onSubmit = async (data: FormData) => {
+    console.log("Form Data:", data);
+    console.log("Errors:", errors);
 
     try {
       const base64Images = await Promise.all(
@@ -111,11 +132,12 @@ export default function ModernProductForm() {
       );
 
       const fullData = {
-        ...formData,
+        ...data,
         featured,
         newArrival,
         images: base64Images,
       };
+
       console.log("Submitting Product:", fullData);
     } catch (error) {
       console.error("Image conversion failed", error);
@@ -124,54 +146,61 @@ export default function ModernProductForm() {
 
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={handleSubmit(onSubmit)}
       className="max-w-full mx-auto bg-white shadow border"
     >
       <h4 className="text-base font-semibold bg-primary p-4 text-white rounded-t-lg">
         Create Product
       </h4>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8 p-8">
-        {/* Left Section */}
         <div className="md:col-span-2 space-y-6">
           <div>
             <label className="block text-sm font-medium mb-1">
               Product Name
             </label>
             <input
-              type="text"
-              name="name"
-              value={formData.name}
-              onChange={handleInputChange}
-              className="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-primary focus:border-primary"
+              {...register("name")}
+              className="w-full px-4 py-2 border rounded-md"
               placeholder="Enter product name"
             />
+            {errors.name && (
+              <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
+            )}
           </div>
 
           <div>
+            <label className="block text-sm font-medium mb-1">
+              Description
+            </label>
             <ReactQuill
               theme="snow"
-              value={formData.description}
-              onChange={(content) =>
-                setFormData((prev) => ({ ...prev, description: content }))
-              }
+              value={watch("description")}
+              onChange={(value) => setValue("description", value)}
               modules={modules}
               formats={formats}
             />
+            {errors.description && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.description.message}
+              </p>
+            )}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {["categoryId", "brandId", "supplierId"].map((field) => (
+            {["category", "brand", "supplier"].map((field) => (
               <div key={field}>
                 <label className="block text-sm font-medium mb-1">
                   {field.replace("Id", " ID")}
                 </label>
                 <input
-                  type="text"
-                  name={field}
-                  value={formData[field as keyof typeof formData]}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border shadow-sm rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
+                  {...register(field as keyof FormData)}
+                  className="w-full px-3 py-2 border rounded-md"
                 />
+                {errors[field as keyof FormData] && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors[field as keyof FormData]?.message}
+                  </p>
+                )}
               </div>
             ))}
           </div>
@@ -179,22 +208,21 @@ export default function ModernProductForm() {
           <div>
             <label className="block text-sm font-medium mb-1">Slug</label>
             <input
-              type="text"
-              name="slug"
-              value={formData.slug}
-              onChange={handleInputChange}
-              className="w-full px-3 py-2 border shadow-sm rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
+              {...register("slug")}
+              className="w-full px-3 py-2 border rounded-md"
             />
+            {errors.slug && (
+              <p className="text-red-500 text-sm mt-1">{errors.slug.message}</p>
+            )}
           </div>
 
-          {/* Images */}
           <div>
             <label className="block text-sm font-medium mb-1">Images</label>
             <input
               type="file"
               multiple
               onChange={handleImageChange}
-              className="w-full bg-white border border-gray-300 rounded-xl px-4 py-3 text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-blue-100 file:text-primary hover:file:bg-blue-200"
+              className="w-full border rounded-xl px-4 py-3"
             />
             <div className="flex gap-4 mt-4 flex-wrap">
               {imagePreviews.map((src, i) => (
@@ -212,7 +240,7 @@ export default function ModernProductForm() {
                     onClick={() => deleteImage(i)}
                     className="absolute top-1 right-1 bg-red-500 text-white text-xs rounded-full p-2 hidden group-hover:block"
                   >
-                    <FaTrash className="text-white" />
+                    <FaTrash />
                   </button>
                 </div>
               ))}
@@ -220,7 +248,6 @@ export default function ModernProductForm() {
           </div>
         </div>
 
-        {/* Right Section */}
         <div className="space-y-6">
           {[
             { label: "Stock", name: "stock" },
@@ -234,53 +261,57 @@ export default function ModernProductForm() {
               <input
                 type="number"
                 step="0.01"
-                name={name}
-                value={formData[name as keyof typeof formData]}
-                onChange={handleInputChange}
-                className="w-full border px-3 py-2 shadow-sm rounded-md focus:ring-2 focus:ring-primary focus:border-primary"
+                {...register(name as keyof FormData)}
+                className="w-full border px-3 py-2 rounded-md"
               />
+              {errors[name as keyof FormData] && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors[name as keyof FormData]?.message}
+                </p>
+              )}
             </div>
           ))}
 
-          {/* Toggles */}
           {[
-            { label: "Featured Product", value: featured, setter: setFeatured },
-            { label: "New Arrival", value: newArrival, setter: setNewArrival },
-          ].map(({ label, value, setter }) => (
+            { label: "Featured Product", state: featured, setter: setFeatured },
+            { label: "New Arrival", state: newArrival, setter: setNewArrival },
+          ].map(({ label, state, setter }) => (
             <div
               key={label}
-              className="flex items-center justify-between border px-3 py-2 shadow-sm bg-white"
+              className="flex items-center justify-between border px-3 py-2"
             >
               <label className="text-sm font-medium">{label}</label>
               <button
                 type="button"
-                onClick={() => setter(!value)}
+                onClick={() => setter(!state)}
                 className={`w-12 h-6 flex items-center rounded-full p-1 transition-colors ${
-                  value ? "bg-primary" : "bg-gray-300"
+                  state ? "bg-primary" : "bg-gray-300"
                 }`}
               >
                 <div
                   className={`bg-white w-4 h-4 rounded-full shadow transform duration-300 ${
-                    value ? "translate-x-6" : "translate-x-0"
+                    state ? "translate-x-6" : "translate-x-0"
                   }`}
                 />
               </button>
             </div>
           ))}
 
-          {/* Status Dropdown */}
           <div>
             <label className="block text-sm font-medium mb-1">Status</label>
             <select
-              name="status"
-              value={formData.status}
-              onChange={handleInputChange}
-              className="w-full border px-3 py-2 shadow-sm focus:outline-none focus:ring"
+              {...register("status")}
+              className="w-full border px-3 py-2 rounded-md"
             >
               <option value="ACTIVE">Active</option>
               <option value="INACTIVE">Inactive</option>
               <option value="OUT_OF_STOCK">Out Of Stock</option>
             </select>
+            {errors.status && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.status.message}
+              </p>
+            )}
           </div>
         </div>
       </div>
