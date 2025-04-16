@@ -20,3 +20,23 @@ export async function uploadImage(file: string, folder: string) {
     throw new Error("Failed to upload image");
   }
 }
+
+export async function uploadMultipleImage(files: string[], folder: string) {
+  const uploadedImages: string[] = [];
+
+  for (const file of files) {
+    try {
+      const result = await cloudinary.uploader.upload(file, {
+        folder: `exute_shop/${folder}`,
+        transformation: { width: 300, height: 300, crop: "fill" },
+        resource_type: "image",
+      });
+      uploadedImages.push(result.secure_url);
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      throw new Error("Image upload failed");
+    }
+  }
+
+  return uploadedImages;
+}

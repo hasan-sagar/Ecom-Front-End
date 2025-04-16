@@ -1,9 +1,28 @@
-// app/api/create-product/route.ts
+import { uploadMultipleImage } from "@/app/lib/cloudinary";
 import prisma from "@/app/lib/prisma";
 import { createProductSchema } from "@/app/lib/validations/product";
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
+
+interface ProductData {
+  id: string;
+  product_name: string;
+  product_description: string;
+  category_id: string;
+  brand_id: string;
+  supplier_id: string;
+  product_slug: string;
+  image_url: string[];
+  stock: number;
+  price: number;
+  sale_price: number;
+  shipping_cost: number;
+  discount_percentage: number;
+  status: string;
+  is_featured: boolean;
+  is_new_arrival: boolean;
+}
 
 interface Product {
   id: string;
@@ -11,56 +30,42 @@ interface Product {
 }
 
 export async function POST(req: NextRequest) {
-  //   //extract token request
-  //   const token = await getToken({ req });
+  const token = await getToken({ req });
 
-  //   //validate token
-  //   if (!token) {
-  //     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
-  //   }
+  if (!token) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
 
-  //   //role
-  //   const role = token.role;
-  //   if (role !== "admin") {
-  //     return NextResponse.json(
-  //       {
-  //         message: "Forbidden Resource",
-  //       },
-  //       {
-  //         status: 403,
-  //       }
-  //     );
-  //   }
+  const role = token.role;
+  if (role !== "admin") {
+    return NextResponse.json(
+      { message: "Forbidden Resource" },
+      { status: 403 }
+    );
+  }
 
-  //   const adminId = token.id;
+  const adminId = token.id;
 
-  //   if (!adminId) {
-  //     return NextResponse.json(
-  //       { message: "Unauthorized: Missing user ID in token" },
-  //       { status: 401 }
-  //     );
-  //   }
+  if (!adminId) {
+    return NextResponse.json(
+      { message: "Unauthorized: Missing user ID in token" },
+      { status: 401 }
+    );
+  }
 
   try {
-    // Parse the request body
     const bodyData = await req.json();
     const { image_url, is_featured, is_new_arrival } = bodyData;
 
-    // if (!image_url) {
-    //   return NextResponse.json(
-    //     {
-    //       message: "Image url required",
-    //     },
-    //     {
-    //       status: 400,
-    //     }
-    //   );
-    // }
+    if (!Array.isArray(image_url) || image_url.length === 0) {
+      return NextResponse.json(
+        { message: "Minimum upload one image" },
+        { status: 400 }
+      );
+    }
 
-    //data validation
     const validatedData = createProductSchema.parse(bodyData);
 
-    //check for existing product
     const existingProduct = await checkProductExist(
       validatedData.product_name,
       validatedData.product_slug
@@ -68,37 +73,96 @@ export async function POST(req: NextRequest) {
 
     if (existingProduct.length > 0) {
       return NextResponse.json(
-        {
-          message: "Product already exist",
-        },
-        {
-          status: 409,
-        }
+        { message: "Product already exists" },
+        { status: 409 }
       );
     }
 
-    // Respond with success
+    // Upload images
+    let imageUrls: string[] = [];
+    try {
+      imageUrls = await uploadMultipleImage(image_url, "products");
+    } catch (error) {
+      return NextResponse.json(
+        { message: "Failed to upload one or more images" },
+        { status: 400 }
+      );
+    }
+
+    // Insert product using raw SQL
+    const createdProduct = await prisma.$queryRaw<ProductData[]>`
+      INSERT INTO product (
+        product_name,
+        product_description,
+        price,
+        stock,
+        category_id,
+        brand_id,
+        user_id,
+        product_slug,
+        is_featured,
+        is_new_arrival,
+        status,
+        shipping_cost,
+        discount_percentage,
+        sale_price,
+        supplier_id
+      )
+      VALUES (
+        ${validatedData.product_name},
+        ${validatedData.product_description},
+        ${validatedData.price},
+        ${validatedData.stock},
+        ${validatedData.category_id}::uuid,
+        ${validatedData.brand_id}::uuid,
+        ${adminId}::uuid,
+        ${validatedData.product_slug},
+        ${is_featured ?? false},
+        ${is_new_arrival ?? false},
+        'ACTIVE',
+        ${validatedData.shipping_cost},
+        ${validatedData.discount_percentage ?? 0},
+        ${validatedData.sale_price},
+        ${validatedData.supplier_id}::uuid
+      )
+      RETURNING id, product_name;
+    `;
+
+    const productId = createdProduct[0]?.id;
+
+    if (!productId) {
+      return NextResponse.json(
+        { message: "Failed to create product" },
+        { status: 500 }
+      );
+    }
+
+    // Insert product images using raw SQL
+    for (const image of imageUrls) {
+      await prisma.$queryRaw`
+        INSERT INTO product_image (
+          image_url,
+          product_id
+        )
+        VALUES (
+          ${image},
+          ${productId}::uuid
+        );
+      `;
+    }
+
     return NextResponse.json(
       {
         message: "Product created successfully",
-        data: {
-          ...validatedData,
-          image_url,
-          is_featured,
-          is_new_arrival,
-        },
       },
       { status: 201 }
     );
   } catch (error: any) {
-    // Handle validation errors
     if (error instanceof z.ZodError) {
-      // Extract only the error messages
       const errorMessages = error.errors.map((err) => ({
         field: err.path.join("."),
         message: err.message,
       }));
-      87;
 
       return NextResponse.json(
         { error: "Validation failed", details: errorMessages },
@@ -106,23 +170,22 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    // Handle other errors
     return NextResponse.json(
-      { error: "Internal Server Error" },
+      { error: "Internal Server Error", details: error.message },
       { status: 500 }
     );
   }
 }
 
-//check product exist
+// Helper to check if product already exists
 async function checkProductExist(
   product_name: string,
   product_slug: string
 ): Promise<Product[]> {
-  return await prisma.$queryRaw`
-      SELECT id,product_name
-      FROM product
-      WHERE product.product_name = ${product_name}
-      OR product.product_slug=${product_slug}
-    `;
+  return await prisma.$queryRaw<Product[]>`
+    SELECT id, product_name
+    FROM product
+    WHERE product_name = ${product_name}
+    OR product_slug = ${product_slug};
+  `;
 }

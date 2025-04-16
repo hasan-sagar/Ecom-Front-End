@@ -5,10 +5,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import dynamic from "next/dynamic";
-import { FaTrash } from "react-icons/fa";
+import { FaSpinner, FaTrash } from "react-icons/fa";
 import "react-quill-new/dist/quill.snow.css";
 import { useMutation } from "@tanstack/react-query";
 import { createProduct } from "@/services/product-api";
+import toast from "react-hot-toast";
+import axios from "axios";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
@@ -122,8 +124,15 @@ export default function ModernProductForm() {
     mutationFn: async (productData: ProductData) => {
       return await createProduct(productData);
     },
-    onError: (error) => {
-      console.error("Product creation failed:", error);
+    onSuccess: (data) => {
+      toast.success(data.message);
+    },
+    onError: (error: any) => {
+      if (axios.isAxiosError(error)) {
+        toast.error(`${error.response?.data.message}`);
+      } else {
+        toast.error(`${error.message}`);
+      }
     },
   });
 
@@ -273,7 +282,7 @@ export default function ModernProductForm() {
               type="file"
               multiple
               onChange={handleImageChange}
-              className="w-full border rounded-xl px-4 py-3"
+              className="w-full border rounded-xl px-4 py-3 file:bg-blue-100 file:rounded-md file:px-3 file:py-1 file:border-none"
             />
             <div className="flex gap-4 mt-4 flex-wrap">
               {imagePreviews.map((src, i) => (
@@ -368,12 +377,21 @@ export default function ModernProductForm() {
       </div>
 
       <div className="text-right p-8">
-        <button
-          type="submit"
-          className="bg-primary text-white px-7 py-3 font-medium rounded-md"
-        >
-          Save Product
-        </button>
+        {createProductMutation.isPending ? (
+          <button
+            type="submit"
+            className="bg-transparent  px-7 py-3 font-medium rounded-md"
+          >
+            <FaSpinner size={20} className="animate-spin" />
+          </button>
+        ) : (
+          <button
+            type="submit"
+            className="bg-primary text-white px-7 py-3 font-medium rounded-md"
+          >
+            Save Product
+          </button>
+        )}
       </div>
     </form>
   );
