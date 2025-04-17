@@ -67,10 +67,10 @@ model review {
   rating     Int
   comment    String?  @db.VarChar
   product_id String   @db.Uuid
-  user_id    String   @db.Uuid
   created_at DateTime @default(now()) @db.Timestamp(6)
+  user_name  String   @db.VarChar
+  user_email String   @unique @db.VarChar
   product    product  @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-  user       user     @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model user {
@@ -85,7 +85,6 @@ model user {
   brand        brand[]
   category     category[]
   product      product[]
-  review       review[]
   supplier     supplier[]
 }
 

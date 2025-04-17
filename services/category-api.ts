@@ -1,6 +1,6 @@
 import axiosInstance from "./axios-instance";
 
-//get all category api
+//get all category api with pagiantion
 export const getAllCategories = async (
   page: number,
   pageSize: number,
@@ -39,5 +39,11 @@ export const updateCategory = async (
   const response = await axiosInstance.put(`/category/${categoryId}`, {
     category_name: categoryName,
   });
+  return response.data;
+};
+
+//get all category api
+export const getAllCategoriesData = async () => {
+  const response = await axiosInstance.get("/category/all");
   return response.data;
 };
