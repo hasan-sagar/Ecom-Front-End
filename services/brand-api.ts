@@ -1,6 +1,6 @@
 import axiosInstance from "./axios-instance";
 
-//get all brand api
+//get all brand api with pagination
 export const getAllBrands = async (
   page: number,
   pageSize: number,
@@ -38,5 +38,11 @@ export const updateBrand = async (brandId: string, brandName: string) => {
     brand_name: brandName,
   });
 
+  return response.data;
+};
+
+//get all brands
+export const getAllBrandsData = async () => {
+  const response = await axiosInstance.get("/brands/all");
   return response.data;
 };

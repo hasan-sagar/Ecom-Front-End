@@ -33,7 +33,7 @@ export const createSupplier = async (
   return response.data;
 };
 
-//get all suppliers
+//get all suppliers with pagination
 export const getAllSuppliers = async (
   page: number,
   pageSize: number,
@@ -72,5 +72,11 @@ export const updateSupplier = async (
     supplier_address: supplierData.supplier_address,
   });
 
+  return response.data;
+};
+
+//get all suppliers
+export const getAllSuppliersData = async () => {
+  const response = await axiosInstance.get("/suppliers/all");
   return response.data;
 };

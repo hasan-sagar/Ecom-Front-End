@@ -7,10 +7,13 @@ import * as z from "zod";
 import dynamic from "next/dynamic";
 import { FaSpinner, FaTrash } from "react-icons/fa";
 import "react-quill-new/dist/quill.snow.css";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { createProduct } from "@/services/product-api";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { getAllBrandsData } from "@/services/brand-api";
+import { getAllCategoriesData } from "@/services/category-api";
+import { getAllSuppliersData } from "@/services/supplier-api";
 
 const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 
@@ -116,6 +119,20 @@ export default function ModernProductForm() {
       shippingCost: undefined,
       discount: 0,
       status: "ACTIVE",
+    },
+  });
+
+  //get all brands api
+  const { data, isLoading } = useQuery({
+    queryKey: ["brands-category-suppliers-dropdown"],
+    queryFn: async () => {
+      const [brandsData, categoryData, suppliersData] = await Promise.all([
+        getAllBrandsData(),
+        getAllCategoriesData(),
+        getAllSuppliersData(),
+      ]);
+
+      return { brandsData, categoryData, suppliersData };
     },
   });
 
@@ -247,22 +264,49 @@ export default function ModernProductForm() {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            {["category", "brand", "supplier"].map((field) => (
-              <div key={field}>
-                <label className="block text-sm font-medium mb-1">
-                  {field.replace("Id", " ID")}
-                </label>
-                <input
-                  {...register(field as keyof FormData)}
-                  className="w-full px-3 py-2 border rounded-md"
-                />
-                {errors[field as keyof FormData] && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors[field as keyof FormData]?.message}
-                  </p>
-                )}
-              </div>
-            ))}
+            {/* category dropdown */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Category</label>
+              <select
+                {...register("category")}
+                className="w-full border px-3 py-2 rounded-md"
+              >
+                {data?.categoryData.data.map((category: any) => (
+                  <option key={category.id} value={category.id}>
+                    {category.category_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* brands dropdown */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Brand</label>
+              <select
+                {...register("brand")}
+                className="w-full border px-3 py-2 rounded-md"
+              >
+                {data?.brandsData.data.map((brand: any) => (
+                  <option key={brand.id} value={brand.id}>
+                    {brand.brand_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+            {/* Supplier dropdown */}
+            <div>
+              <label className="block text-sm font-medium mb-1">Supplier</label>
+              <select
+                {...register("supplier")}
+                className="w-full border px-3 py-2 rounded-md"
+              >
+                {data?.suppliersData.data.map((supplier: any) => (
+                  <option key={supplier.id} value={supplier.id}>
+                    {supplier.supplier_name}
+                  </option>
+                ))}
+              </select>
+            </div>
           </div>
 
           <div>
