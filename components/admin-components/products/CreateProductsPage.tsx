@@ -21,9 +21,9 @@ const ReactQuill = dynamic(() => import("react-quill-new"), { ssr: false });
 interface ProductData {
   product_name: string;
   product_description: string;
-  category_id: string;
-  brand_id: string;
-  supplier_id: string;
+  category_id: number;
+  brand_id: number;
+  supplier_id: number;
   product_slug: string;
   image_url: string[];
   stock: number;
@@ -77,9 +77,9 @@ const formats = [
 const schema = z.object({
   name: z.string().min(1, "Product name is required"),
   description: z.string().min(1, "Description is required"),
-  category: z.string().min(1, "Category ID is required"),
-  brand: z.string().min(1, "Brand ID is required"),
-  supplier: z.string().min(1, "Supplier ID is required"),
+  category: z.coerce.number(),
+  brand: z.coerce.number(),
+  supplier: z.coerce.number(),
   slug: z.string().min(1, "Slug is required"),
   stock: z.coerce.number().min(1, "Stock is required"),
   price: z.coerce.number().min(0.01, "Price is required"),
@@ -109,9 +109,6 @@ export default function ModernProductForm() {
     defaultValues: {
       name: "",
       description: "",
-      category: "",
-      brand: "",
-      supplier: "",
       slug: "",
       stock: undefined,
       price: undefined,
@@ -119,8 +116,13 @@ export default function ModernProductForm() {
       shippingCost: undefined,
       discount: 0,
       status: "ACTIVE",
+      brand: undefined,
+      category: undefined,
+      supplier: undefined,
     },
   });
+
+  console.log(errors);
 
   //get all brands api
   const { data, isLoading } = useQuery({

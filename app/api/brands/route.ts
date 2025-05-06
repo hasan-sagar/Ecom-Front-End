@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const adminId = token.id;
+  const adminId = Number(token.id);
 
   if (!adminId) {
     return NextResponse.json(
@@ -42,16 +42,16 @@ export async function GET(req: NextRequest) {
     const totalBrandsFetch: [{ count: any }] =
       await prisma.$queryRaw`SELECT COUNT(*) AS count 
       FROM brand 
-      WHERE brand.user_id=${adminId}::uuid 
+      WHERE brand.user_id=${adminId}
       AND LOWER(brand.brand_name) LIKE ${`%${query}%`}`;
 
     //fetch total brands with pagination and searching
     const brands = await prisma.$queryRaw<Brands>`
       SELECT id,brand_name,brand_image_url
       FROM brand
-      WHERE brand.user_id=${adminId}::uuid
+      WHERE brand.user_id=${adminId}
       AND LOWER(brand.brand_name) LIKE ${`%${query}%`}
-      ORDER BY brand_name
+      ORDER BY id
       LIMIT ${pageSize} OFFSET ${offset}
     `;
 

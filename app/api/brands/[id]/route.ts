@@ -9,9 +9,10 @@ interface Brand {
 
 export async function DELETE(
   req: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: number }> }
 ) {
-  const id = (await params).id;
+  const id = Number((await params).id);
+
   // Extract token from the request
   const token = await getToken({ req });
 
@@ -46,12 +47,12 @@ export async function DELETE(
 }
 
 //helper function to delete a brand
-async function deleteBrandById(brandId: string) {
+async function deleteBrandById(brandId: number) {
   // Check if brand exists
   const existingBrand: Brand[] = await prisma.$queryRaw`
     SELECT id, brand_name
     FROM brand
-    WHERE brand.id = ${brandId}::uuid
+    WHERE brand.id = ${brandId}
   `;
 
   // If no brand found, return 404
@@ -65,7 +66,7 @@ async function deleteBrandById(brandId: string) {
   // Delete the brand
   await prisma.$executeRaw`
     DELETE FROM brand
-    WHERE brand.id = ${brandId}::uuid
+    WHERE brand.id = ${brandId}
   `;
 
   // Return success response
@@ -80,7 +81,7 @@ export async function PUT(
   req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
-  const id = (await params).id;
+  const id = Number((await params).id);
   // Extract token from the request
   const token = await getToken({ req });
 
@@ -129,12 +130,12 @@ export async function PUT(
 }
 
 //helper function to update brand
-async function updateBrand(brandId: string, brandName: string) {
+async function updateBrand(brandId: number, brandName: string) {
   // Check if brand exists
   const existingBrand: Brand[] = await prisma.$queryRaw`
     SELECT id, brand_name
     FROM brand
-    WHERE brand.id = ${brandId}::uuid
+    WHERE brand.id = ${brandId}
   `;
 
   // If no brand found, return 404
@@ -150,7 +151,7 @@ async function updateBrand(brandId: string, brandName: string) {
   await prisma.$executeRaw`
     UPDATE brand
     SET brand_name = ${brandName}
-    WHERE brand.id = ${brandId}::uuid
+    WHERE brand.id = ${brandId}
   `;
 
   // Return success response

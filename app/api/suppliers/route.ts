@@ -21,7 +21,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const adminId = token.id;
+  const adminId = Number(token.id);
 
   if (!adminId) {
     return NextResponse.json(
@@ -42,14 +42,15 @@ export async function GET(req: NextRequest) {
     const totalSuppliersFetch: [{ count: any }] = await prisma.$queryRaw`
         SELECT COUNT(*) AS count 
         FROM supplier
-        WHERE supplier.user_id = ${adminId}::uuid
+        WHERE supplier.user_id = ${adminId}
+        AND LOWER(supplier.supplier_name) LIKE ${`%${query}%`}
     `;
 
     //fetch total suppliers with pagination and searching
     const suppliers = await prisma.$queryRaw<Suppliers>`
         SELECT id, supplier_name, supplier_email, supplier_phone_number, supplier_country, supplier_city, supplier_company_name, supplier_address
         FROM supplier
-        WHERE supplier.user_id = ${adminId}::uuid
+        WHERE supplier.user_id = ${adminId}
         AND (
         LOWER(supplier_name) LIKE ${`%${query}%`} OR
         LOWER(supplier_email) LIKE ${`%${query}%`} OR
@@ -77,12 +78,16 @@ export async function GET(req: NextRequest) {
         totalPages,
       },
     });
-  } catch (error) {
-    console.log(error);
+  } catch (error: any) {
+    // Ensure the error is logged properly
+    const errorMessage =
+      error instanceof Error ? error.message : "An unknown error occurred";
+    console.error("Error fetching products:", errorMessage);
 
     return NextResponse.json(
       {
-        message: "Error fetching suppliers",
+        message: "Error fetching products",
+        error: errorMessage,
       },
       {
         status: 500,

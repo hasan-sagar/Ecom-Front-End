@@ -6,10 +6,10 @@ const prisma = new PrismaClient();
 
 async function main() {
   // console.log("Seeding Brands....");
-  // const brands = Array.from({ length: 10 }, () => ({
+  // const brands = Array.from({ length: 100 }, () => ({
   //   brand_name: faker.company.name(),
   //   brand_image_url: faker.image.url(),
-  //   user_id: "efe98ada-0863-4609-b0c1-9cde300e64af",
+  //   user_id: 2,
   // }));
   // await prisma.brand.createMany({
   //   data: brands,
@@ -22,7 +22,7 @@ async function main() {
   //     data: {
   //       category_name: categories.name,
   //       category_image_url: categories.image,
-  //       user_id: "efe98ada-0863-4609-b0c1-9cde300e64af",
+  //       user_id: 2,
   //     },
   //     skipDuplicates: true,
   //   });
@@ -39,26 +39,22 @@ async function main() {
   //       supplier_city: faker.location.city(),
   //       supplier_company_name: faker.company.name(),
   //       supplier_address: faker.location.streetAddress(),
-  //       user_id: "efe98ada-0863-4609-b0c1-9cde300e64af",
+  //       user_id: 2,
   //     },
   //     skipDuplicates: true,
   //   });
   // }
   // console.log("Seeding suppliers completed");
-
   console.log("Seeding products...");
-
-  const userId = "efe98ada-0863-4609-b0c1-9cde300e64af";
-  const brandId = "0068fecb-485e-4bbb-bd89-12683cf9e75a";
-  const categoryId = "02f25318-58ef-42a3-ae63-389beea58971";
-  const supplierId = "00203b08-d59b-4eab-b047-123a4d054e47";
-
-  // Seed 500 products
-  for (let i = 0; i < 500; i++) {
+  const userId = 2;
+  const brandId = 101;
+  const categoryId = 1;
+  const supplierId = 1;
+  // Seed 100 products
+  for (let i = 0; i < 100; i++) {
     const slNo = i + 1;
     const productName = faker.commerce.productName();
     const productSlug = faker.helpers.slugify(productName).toLowerCase();
-
     const product = await prisma.product.create({
       data: {
         product_name: productName,
@@ -85,41 +81,39 @@ async function main() {
       },
       // skipDuplicates: true,
     });
-
     console.log(`Created product [SL No: ${slNo}]: ${product.product_name}`);
 
     // const imageCount = faker.number.int({ min: 2, max: 5 });
-    // for (let j = 0; j < imageCount; j++) {
-    //   await prisma.product_image.createMany({
-    //     data: {
-    //       image_url: faker.image.urlLoremFlickr({ category: "product" }),
-    //       product_id: product.id,
-    //     },
-    //     skipDuplicates: true,
-    //   });
-
-    //   console.log(`Added image ${j + 1} for product: ${product.product_name}`);
-    // }
-
-
-    // Generate images for the product
+    // const imagesData = Array.from({ length: imageCount }, () => ({
+    //   image_url: faker.image.urlLoremFlickr({ category: "product" }),
+    //   product_id: product.id, // Associate the image with the product ID
+    // }));
+    // // Bulk create product images
+    // await prisma.product_image.createMany({
+    //   data: imagesData,
+    //   skipDuplicates: true,
+    // });
     const imageCount = faker.number.int({ min: 2, max: 5 });
-    const imagesData = Array.from({ length: imageCount }, () => ({
-      image_url: faker.image.urlLoremFlickr({ category: "product" }),
-      product_id: product.id, // Associate the image with the product ID
+
+    // Use a Set to avoid duplicate URLs per product
+    const imageUrls = new Set<string>();
+    while (imageUrls.size < imageCount) {
+      imageUrls.add(faker.image.urlLoremFlickr({ category: "product" }));
+    }
+
+    const imagesData = Array.from(imageUrls).map((url) => ({
+      image_url: url, // nullable is fine
+      product_id: product.id,
     }));
 
-    // Bulk create product images
     await prisma.product_image.createMany({
       data: imagesData,
       skipDuplicates: true,
     });
-
     console.log(
       `Added ${imageCount} images for product: ${product.product_name}`
     );
   }
-
   console.log("Product seeding completed!");
 }
 

@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const adminId = token.id;
+  const adminId = Number(token.id);
 
   if (!adminId) {
     return NextResponse.json(
@@ -106,7 +106,7 @@ export async function POST(req: NextRequest) {
         ${supplier_city},
         ${supplier_company_name},
         ${supplier_address},
-        ${adminId}::uuid
+        ${adminId}
       )
     `;
 

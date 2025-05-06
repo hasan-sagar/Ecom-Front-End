@@ -17,7 +17,7 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
   }
 
-  const adminId = token.id;
+  const adminId = Number(token.id);
 
   if (!adminId) {
     return NextResponse.json(
@@ -38,7 +38,7 @@ export async function GET(req: NextRequest) {
     const totalCategoryFetch: [{ count: any }] = await prisma.$queryRaw`
         SELECT COUNT(*) AS count
         FROM category
-        WHERE category.user_id=${adminId}::uuid
+        WHERE category.user_id=${adminId}
         AND LOWER(category.category_name) LIKE ${`%${query}%`}
     `;
 
@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
     const categories = await prisma.$queryRaw<Categories>`
         SELECT id , category_name , category_image_url
         FROM category
-        WHERE category.user_id=${adminId}::uuid
+        WHERE category.user_id=${adminId}
         AND LOWER(category.category_name) LIKE ${`%${query}%`}
         ORDER BY category_name
         LIMIT ${pageSize} OFFSET ${offset}

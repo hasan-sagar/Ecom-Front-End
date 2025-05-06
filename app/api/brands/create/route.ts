@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const adminId = token.id;
+  const adminId = Number(token.id);
 
   if (!adminId) {
     return NextResponse.json(
@@ -81,7 +81,7 @@ export async function POST(req: NextRequest) {
   try {
     await prisma.$queryRaw`
     INSERT INTO brand (brand_name,brand_image_url,user_id)
-    values(${brand_name}, ${imageUrl} , ${adminId}::uuid)
+    values(${brand_name}, ${imageUrl} , ${adminId})
   `;
 
     return NextResponse.json(

@@ -9,9 +9,9 @@ interface ProductData {
   id: string;
   product_name: string;
   product_description: string;
-  category_id: string;
-  brand_id: string;
-  supplier_id: string;
+  category_id: number;
+  brand_id: number;
+  supplier_id: number;
   product_slug: string;
   image_url: string[];
   stock: number;
@@ -44,7 +44,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const adminId = token.id;
+  const adminId = Number(token.id);
 
   if (!adminId) {
     return NextResponse.json(
@@ -113,9 +113,9 @@ export async function POST(req: NextRequest) {
         ${validatedData.product_description},
         ${validatedData.price},
         ${validatedData.stock},
-        ${validatedData.category_id}::uuid,
-        ${validatedData.brand_id}::uuid,
-        ${adminId}::uuid,
+        ${validatedData.category_id},
+        ${validatedData.brand_id},
+        ${adminId},
         ${validatedData.product_slug},
         ${is_featured ?? false},
         ${is_new_arrival ?? false},
@@ -123,12 +123,13 @@ export async function POST(req: NextRequest) {
         ${validatedData.shipping_cost},
         ${validatedData.discount_percentage ?? 0},
         ${validatedData.sale_price},
-        ${validatedData.supplier_id}::uuid
+        ${validatedData.supplier_id}
       )
-      RETURNING id, product_name;
+      RETURNING id;
     `;
 
     const productId = createdProduct[0]?.id;
+    console.log("product id", productId);
 
     if (!productId) {
       return NextResponse.json(
@@ -146,7 +147,7 @@ export async function POST(req: NextRequest) {
         )
         VALUES (
           ${image},
-          ${productId}::uuid
+          ${productId}
         );
       `;
     }
