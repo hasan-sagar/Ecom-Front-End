@@ -3,41 +3,41 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+  // directUrl = env("DIRECT_URL")
 }
 
 model brand {
-  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id              Int       @id @default(autoincrement())
   created_at      DateTime  @default(now()) @db.Timestamp(6)
   brand_name      String    @unique @db.VarChar
   brand_image_url String?   @db.VarChar
-  user_id         String    @db.Uuid
+  user_id         Int
   user            user      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   product         product[]
 }
 
 model category {
-  id                 String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                 Int       @id @default(autoincrement())
   created_at         DateTime  @default(now()) @db.Timestamp(6)
   category_name      String    @unique(map: "category_catrgory_name_key") @db.VarChar
   category_image_url String?   @db.VarChar
-  user_id            String    @db.Uuid
+  user_id            Int
   user               user      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   product            product[]
 }
 
 model product {
-  id                  String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                  Int             @id @default(autoincrement())
   created_at          DateTime        @default(now()) @db.Timestamp(6)
   product_name        String          @unique @db.VarChar
   product_description String
   price               Decimal         @db.Decimal
   stock               Int             @default(0)
-  category_id         String          @db.Uuid
-  brand_id            String          @db.Uuid
-  user_id             String          @db.Uuid
+  category_id         Int
+  brand_id            Int
+  user_id             Int
   product_slug        String          @unique @db.VarChar
   is_featured         Boolean         @default(false)
   is_new_arrival      Boolean         @default(false)
@@ -45,7 +45,7 @@ model product {
   shipping_cost       Decimal         @db.Decimal
   discount_percentage Decimal?        @default(0) @db.Decimal
   sale_price          Decimal         @db.Decimal
-  supplier_id         String          @db.Uuid
+  supplier_id         Int
   brand               brand           @relation(fields: [brand_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   category            category        @relation(fields: [category_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   supplier            supplier        @relation(fields: [supplier_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -55,18 +55,18 @@ model product {
 }
 
 model product_image {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id         Int      @id @default(autoincrement())
   created_at DateTime @default(now()) @db.Timestamp(6)
   image_url  String?  @db.VarChar
-  product_id String?  @db.Uuid
+  product_id Int?
   product    product? @relation(fields: [product_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 }
 
 model review {
-  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id         Int      @id @default(autoincrement())
   rating     Int
   comment    String?  @db.VarChar
-  product_id String   @db.Uuid
+  product_id Int
   created_at DateTime @default(now()) @db.Timestamp(6)
   user_name  String   @db.VarChar
   user_email String   @unique @db.VarChar
@@ -74,13 +74,13 @@ model review {
 }
 
 model user {
-  id           String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id           Int        @id @default(autoincrement())
   name         String?    @db.VarChar
   email        String     @unique @db.VarChar
   phone_number String?    @unique @db.VarChar
   address      String?
   created_at   DateTime   @default(now()) @db.Timestamp(6)
-  role         String     @db.VarChar
+  role         String     @default("user") @db.VarChar
   password     String?    @db.VarChar
   brand        brand[]
   category     category[]
@@ -90,7 +90,7 @@ model user {
 
 /// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
 model supplier {
-  id                    String    @id(map: "suppliers_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  id                    Int       @id(map: "suppliers_pkey") @default(autoincrement())
   supplier_name         String    @db.VarChar
   supplier_email        String    @unique(map: "suppliers_supplier_email_key") @db.VarChar
   supplier_phone_number String    @unique(map: "suppliers_supplier_phone_number_key") @db.VarChar
@@ -99,7 +99,7 @@ model supplier {
   supplier_company_name String    @db.VarChar
   supplier_address      String    @db.VarChar
   created_at            DateTime  @default(now()) @db.Timestamp(6)
-  user_id               String    @db.Uuid
+  user_id               Int
   product               product[]
   user                  user      @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "suppliers_user_id_fkey")
 }

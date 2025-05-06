@@ -3,9 +3,9 @@ import axiosInstance from "./axios-instance";
 interface ProductBodyData {
   product_name: string;
   product_description: string;
-  category_id: string;
-  brand_id: string;
-  supplier_id: string;
+  category_id: number;
+  brand_id: number;
+  supplier_id: number;
   product_slug: string;
   image_url: string[];
   stock: number;

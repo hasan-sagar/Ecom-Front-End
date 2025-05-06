@@ -11,9 +11,9 @@ export const createProductSchema = z.object({
       required_error: "Description is required",
     })
     .min(1),
-  category_id: z.string({ required_error: "Category is required" }).min(1),
-  brand_id: z.string({ required_error: "Brand is required" }).min(1),
-  supplier_id: z.string({ required_error: "Supplier is required" }).min(1),
+  category_id: z.number({ required_error: "Category is required" }),
+  brand_id: z.number({ required_error: "Brand is required" }),
+  supplier_id: z.number({ required_error: "Supplier is required" }),
   product_slug: z.string({ required_error: "Slug is required" }).min(1),
   stock: z.coerce.number({ required_error: "Stock is required" }).min(1),
   price: z.coerce.number({ required_error: "Price is required" }).min(0.01),

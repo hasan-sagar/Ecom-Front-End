@@ -1,4 +1,5 @@
 import prisma from "@/app/lib/prisma";
+import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
 interface Products {
@@ -8,16 +9,30 @@ interface Products {
   stock: number;
   is_featured: boolean;
   is_new_arrival: boolean;
-  status: [];
+  status: string;
   shipping_cost: number;
   sale_price: number;
   supplier_name: string;
   category_name: string;
   brand_name: string;
+  image_url: string[];
 }
 
 export async function GET(req: NextRequest) {
-  //parse query
+  const token = await getToken({ req });
+
+  if (!token) {
+    return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+  }
+
+  const adminId = Number(token.id);
+  if (!adminId) {
+    return NextResponse.json(
+      { message: "Unauthorized: Missing user ID in token" },
+      { status: 401 }
+    );
+  }
+
   const url = new URL(req.url);
   const page = parseInt(url.searchParams.get("page") || "1");
   const pageSize = parseInt(url.searchParams.get("pageSize") || "10");
@@ -25,14 +40,16 @@ export async function GET(req: NextRequest) {
   const offset: number = (page - 1) * pageSize;
 
   try {
-    //fetch total products count
-    const totalProductsFetch: [{ count: any }] = await prisma.$queryRaw`
-        SELECT COUNT(product.id) as count
-        FROM product
+    // Total count with query
+    const totalProductsFetch: [{ count: number }] = await prisma.$queryRaw`
+      SELECT COUNT(product.id) as count
+      FROM product
+      WHERE product.user_id = ${adminId}
+      AND(LOWER(product.product_name) LIKE ${`%${query}%`} )
     `;
 
-    const product = await prisma.$queryRaw`
-        SELECT 
+    const products: Products[] = await prisma.$queryRaw`
+      SELECT
         product.id,
         product.product_name,
         product.price,
@@ -42,47 +59,54 @@ export async function GET(req: NextRequest) {
         product.status,
         product.shipping_cost,
         product.sale_price,
-        supplier.id AS supplier_id,
         supplier.supplier_name,
-        category.id AS category_id,
         category.category_name,
-        brand.id AS brand_id,
         brand.brand_name,
-        array_agg(DISTINCT product_image.image_url) AS image_url
-    FROM 
-        product
-    LEFT JOIN 
-        product_image ON product.id = product_image.product_id
-    LEFT JOIN
-        supplier ON product.supplier_id = supplier.id
-    LEFT JOIN
-        category ON product.category_id = category.id
-    LEFT JOIN
-        brand ON product.brand_id = brand.id
-    GROUP BY 
+        array_agg(product_image.image_url) AS image_url
+      FROM product
+      LEFT JOIN product_image ON product.id = product_image.product_id
+      LEFT JOIN supplier ON product.supplier_id = supplier.id
+      LEFT JOIN category ON product.category_id = category.id
+      LEFT JOIN brand ON product.brand_id = brand.id
+      WHERE product.user_id = ${adminId}
+      AND (
+        LOWER(product.product_name) LIKE ${`%${query}%`} OR
+        LOWER(supplier.supplier_email) LIKE ${`%${query}%`} OR
+        LOWER(supplier.supplier_phone_number) LIKE ${`%${query}%`} OR
+        LOWER(supplier.supplier_country) LIKE ${`%${query}%`} OR
+        LOWER(supplier.supplier_city) LIKE ${`%${query}%`} OR
+        LOWER(supplier.supplier_company_name) LIKE ${`%${query}%`} OR
+        LOWER(supplier.supplier_address) LIKE ${`%${query}%`}
+      )
+      GROUP BY
         product.id,
-        supplier.id,
         supplier.supplier_name,
-        category.id,
         category.category_name,
-        brand.id,
         brand.brand_name
-    ORDER BY 
-        product.product_name ASC;
+      ORDER BY
+        product.product_name
+      LIMIT ${pageSize} OFFSET ${offset}
+    `;
 
-  `;
+    const totalProducts = Number(totalProductsFetch[0].count);
+    const totalPages = Math.ceil(totalProducts / pageSize);
 
-    return NextResponse.json(product);
+    return NextResponse.json({
+      message: "success",
+      data: products,
+      pagination: {
+        currentPage: page,
+        pageSize,
+        totalProducts,
+        totalPages,
+      },
+    });
   } catch (error) {
-    console.log(error);
+    console.error("Error fetching products:", error);
 
     return NextResponse.json(
-      {
-        message: "Error fetching products",
-      },
-      {
-        status: 500,
-      }
+      { message: "Error fetching products" },
+      { status: 500 }
     );
   }
 }
