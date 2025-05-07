@@ -77,9 +77,9 @@ const formats = [
 const schema = z.object({
   name: z.string().min(1, "Product name is required"),
   description: z.string().min(1, "Description is required"),
-  category: z.coerce.number(),
-  brand: z.coerce.number(),
-  supplier: z.coerce.number(),
+  category: z.coerce.number().min(1, "Category is required"),
+  brand: z.coerce.number().min(1, "Brand is required"),
+  supplier: z.coerce.number().min(1, "Supplier is required"),
   slug: z.string().min(1, "Slug is required"),
   stock: z.coerce.number().min(1, "Stock is required"),
   price: z.coerce.number().min(0.01, "Price is required"),
@@ -116,9 +116,6 @@ export default function ModernProductForm() {
       shippingCost: undefined,
       discount: 0,
       status: "ACTIVE",
-      brand: undefined,
-      category: undefined,
-      supplier: undefined,
     },
   });
 
@@ -200,9 +197,9 @@ export default function ModernProductForm() {
       const productData: ProductData = {
         product_name: data.name,
         product_description: data.description,
-        category_id: data.category,
-        brand_id: data.brand,
-        supplier_id: data.supplier,
+        category_id: Number(data.category),
+        brand_id: Number(data.brand),
+        supplier_id: Number(data.supplier),
         product_slug: data.slug,
         image_url: base64Images,
         stock: data.stock,
@@ -272,7 +269,12 @@ export default function ModernProductForm() {
               <select
                 {...register("category")}
                 className="w-full border px-3 py-2 rounded-md"
+                defaultValue=""
+                required
               >
+                <option value="" disabled>
+                  Select Category
+                </option>
                 {data?.categoryData.data.map((category: any) => (
                   <option key={category.id} value={category.id}>
                     {category.category_name}
@@ -287,7 +289,12 @@ export default function ModernProductForm() {
               <select
                 {...register("brand")}
                 className="w-full border px-3 py-2 rounded-md"
+                defaultValue=""
+                required
               >
+                <option value="" disabled>
+                  Select Brand
+                </option>
                 {data?.brandsData.data.map((brand: any) => (
                   <option key={brand.id} value={brand.id}>
                     {brand.brand_name}
@@ -301,7 +308,12 @@ export default function ModernProductForm() {
               <select
                 {...register("supplier")}
                 className="w-full border px-3 py-2 rounded-md"
+                defaultValue=""
+                required
               >
+                <option value="" disabled>
+                  Select Supplier
+                </option>
                 {data?.suppliersData.data.map((supplier: any) => (
                   <option key={supplier.id} value={supplier.id}>
                     {supplier.supplier_name}
