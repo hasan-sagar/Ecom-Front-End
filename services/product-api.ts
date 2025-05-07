@@ -40,3 +40,17 @@ export const createProduct = async (productBodyData: ProductBodyData) => {
 
   return response.data;
 };
+
+//get products
+export const getProducts = async (
+  page: number,
+  pageSize: number,
+  query: string
+) => {
+  const response = await axiosInstance.get(
+    `/products?page=${page}&pageSize=${pageSize}&query=${query}`
+  );
+
+  return response.data;
+  
+};

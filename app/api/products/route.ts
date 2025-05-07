@@ -16,6 +16,7 @@ interface Products {
   category_name: string;
   brand_name: string;
   image_url: string[];
+  created_at: string;
 }
 
 export async function GET(req: NextRequest) {
@@ -62,7 +63,8 @@ export async function GET(req: NextRequest) {
         supplier.supplier_name,
         category.category_name,
         brand.brand_name,
-        array_agg(product_image.image_url) AS image_url
+        array_agg(product_image.image_url) AS image_url,
+        product.created_at
       FROM product
       LEFT JOIN product_image ON product.id = product_image.product_id
       LEFT JOIN supplier ON product.supplier_id = supplier.id
